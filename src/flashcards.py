@@ -77,6 +77,7 @@ class FlashcardGenerator:
         3. Focus on "why" and "how" rather than just "what"
         4. Include both foundational and advanced concepts
         5. Connect theory to real-world applications when possible
+        6. Do not use acronyms or abbreviations unless they are well-known.
         
         FLASHCARD DESIGN PRINCIPLES:
         - Front: Clear, specific question or prompt
