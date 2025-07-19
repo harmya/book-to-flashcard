@@ -1,0 +1,10 @@
+[project]
+name = "flashlearn"
+version = "0.1.0"
+description = "Generate flashcards for learning from Book PDFs"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "genanki>=0.13.1",
+    "modal>=1.1.0",
+]
