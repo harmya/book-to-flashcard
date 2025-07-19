@@ -1,6 +1,6 @@
 # Modal Anki 
 
-Modal Anki is a tool to generate flashcards from PDFs and save them to Anki.
+I would like have certain concepts stay fresh in my mind. I think flashcards are a good way to keep your knowledge "warm" so it does not get evicted. However, I struggle to find the time to make these flashcards. So I wrote, Modal Anki -- a tool to generate flashcards from PDFs and save them to Anki.
 
 We use a reasoning model to generate the flashcards, based on the text in the PDF. Then, we save the flashcards to an importable Anki package. Have fun!
 
@@ -18,15 +18,8 @@ To specify the number of cards per chunk:
 modal run flashcards.py::pdf_flashcards --pdf-path="path/to/your.pdf" --num-cards=15
 ```
 
-## Example Run:
-
-```text
-Processing PDF: ../data/dist_sys.pdf
-Chunk size: 32 pages
-Cards per chunk: 16
-
-Starting VLLM server with command....
-```
+## Example
+There should be an Anki pkg in the data/ folder that makes flashcards from a distributed systems book. Feel free to try any book that you want!
 
 
 
