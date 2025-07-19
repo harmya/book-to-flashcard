@@ -6,7 +6,7 @@ I would like have certain concepts stay fresh in my mind. I read that flashcards
 
 We use a reasoning model to generate the flashcards, based on the text in the PDF. Then, we save the flashcards to an importable Anki package. Have fun!
 
-Curently training runs on a 2 A100 GPUs on Modal with a Qwen/QwQ-32B-AWQ model. Sign up for an account at [Modal](https://modal.com) to run this. You can get 30$/month of free credits.
+Curently, inference runs on a 2 A100 GPUs on Modal with a Qwen/QwQ-32B-AWQ model. Sign up for an account at [Modal](https://modal.com) to run this. You can get 30$/month of free credits.
 
 ## Usage
 
