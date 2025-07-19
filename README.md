@@ -1,6 +1,6 @@
 # Book to Flashcard 
 
-I would like have certain concepts stay fresh in my mind. I think flashcards are a good way to keep your knowledge "warm" so it does not get evicted. However, I struggle to find the time to make these flashcards. So I wrote, Modal Anki -- a tool to generate flashcards from PDFs and save them to Anki.
+I would like have certain concepts stay fresh in my mind. I think flashcards are a good way to keep your knowledge "warm" so it does not get evicted. However, I struggle to find the time to make these flashcards. So I wrote this tool to generate flashcards from PDFs and save them to Anki.
 
 We use a reasoning model to generate the flashcards, based on the text in the PDF. Then, we save the flashcards to an importable Anki package. Have fun!
 
