@@ -17,6 +17,15 @@ Start by cloning this repo:
 git clone https://github.com/harmya/book-to-flashcard.git
 ```
 
+Use `uv` to install the dependencies:
+```bash
+uv sync
+```
+
+You can also use `uv pip install` to install the dependencies.
+
+Make sure to set up your [Modal](https://modal.com) token.
+
 Basic usage:
 ```bash
 modal run src/flashcards.py --pdf="path/to/your.pdf"
