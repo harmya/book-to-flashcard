@@ -1,14 +1,11 @@
 import os
 import subprocess
 from modal import Image, App, Secret, gpu, web_server, method
-MODEL_DIR = "/model"
-MODEL_NAME = "Qwen/QwQ-32B"
 import json
-from typing import Any, List, Dict
+from typing import Any, List, Dict, Tuple
 import modal
 import PyPDF2
 import io
-import genanki
 
 vllm_image = (
     modal.Image.debian_slim(python_version="3.12")
@@ -31,15 +28,16 @@ vllm_cache_vol = modal.Volume.from_name("vllm-cache", create_if_missing=True)
 
 FAST_BOOT = True
 app = modal.App("PDF-Flashcards")
-N_GPU = 1
+N_GPU = 2
 MINUTES = 60
+MODEL_DIR = "/model"
+MODEL_NAME = "Qwen/QwQ-32B-AWQ"
 VLLM_PORT = 8000
 
 @app.cls(
     image=vllm_image,
-    gpu=f"H100:{N_GPU}",
-    scaledown_window=15 * MINUTES,
-    timeout=20 * MINUTES,
+    gpu=f"A100:{N_GPU}",
+    timeout=60 * MINUTES,
     volumes={
         "/root/.cache/huggingface": hf_cache_vol,
         "/root/.cache/vllm": vllm_cache_vol,
@@ -72,46 +70,93 @@ class FlashcardGenerator:
         
         time.sleep(60)
 
-
     def create_flashcard_prompt(self, text: str, num_cards: int = 20) -> str:
         """Create a detailed prompt for generating learning-oriented flashcards"""
-        return f"""You are an expert educator and learning specialist. Your task is to create high-quality flashcards from the provided text that promote deep understanding and first-principles learning.
+        return f"""You are an expert educator and learning specialist. 
+        Your task is to create high-quality flashcards from the provided text that promote deep understanding and first-principles learning.
+        
+        CRITICAL: You must respond with ONLY a valid JSON object. Do not include any other text, explanations, or commentary.
+        
+        GUIDELINES:
+        1. Break down complex concepts into fundamental building blocks
+        2. Design questions that require retrieval, not recognition
+        3. Focus on "why" and "how" rather than just "what"
+        4. Include both foundational and advanced concepts
+        5. Connect theory to real-world applications when possible
+        
+        FLASHCARD DESIGN PRINCIPLES:
+        - Front: Clear, specific question or prompt
+        - Back: Comprehensive but concise answer with key insights
+        - Avoid yes/no questions
+        - Use scenarios and examples
+        - Include connections between concepts
+        - Emphasize cause-and-effect relationships
+        
+        Create exactly {num_cards} flashcards from the following text. 
+        DO NOT MAKE FLASHCARDS IF THE TEXT IS NOT RELEVANT TO THE SUBJECT. FOR EXAMPLE, ACKNOWLEDGEMENTS, TABLE OF CONTENTS, REFERENCES, ETC. ARE NOT RELEVANT.
+        
+        IMPORTANT: Respond with ONLY this JSON structure, nothing else:
+        
+        {{
+          "flashcards": [
+            {{
+              "front": "Question or prompt that tests deep understanding",
+              "back": "Clear, comprehensive answer with key insights and connections"
+            }}
+          ]
+        }}
+        
+        TEXT TO PROCESS:
+        {text[:8000]}
+        
+        Remember: Focus on understanding, not memorization. Each flashcard should help build genuine comprehension of the subject matter. RESPOND WITH ONLY THE JSON OBJECT."""
+    
+    def pdf_pages_generator(self, file_path):
+        """Generator that yields text page by page"""
+        import pymupdf
+        doc = pymupdf.open(file_path)
+    
+        try:
+            for page_num in range(doc.page_count):
+                page = doc[page_num]
+                text = page.get_text()
+                yield text
+            
+        finally:
+            doc.close()
 
-CRITICAL: You must respond with ONLY a valid JSON object. Do not include any other text, explanations, or commentary.
-
-GUIDELINES FOR FLASHCARD CREATION:
-
-1. **First Principles Focus**: Break down complex concepts into fundamental building blocks
-2. **Active Recall**: Design questions that require retrieval, not recognition
-3. **Conceptual Understanding**: Focus on "why" and "how" rather than just "what"
-4. **Progressive Complexity**: Include both foundational and advanced concepts
-5. **Practical Application**: Connect theory to real-world applications when possible
-
-FLASHCARD DESIGN PRINCIPLES:
-- Front: Clear, specific question or prompt
-- Back: Comprehensive but concise answer with key insights
-- Avoid yes/no questions
-- Use scenarios and examples
-- Include connections between concepts
-- Emphasize cause-and-effect relationships
-
-Create exactly {num_cards} flashcards from the following text. 
-
-IMPORTANT: Respond with ONLY this JSON structure, nothing else:
-
-{{
-  "flashcards": [
-    {{
-      "front": "Question or prompt that tests deep understanding",
-      "back": "Clear, comprehensive answer with key insights and connections"
-    }}
-  ]
-}}
-
-TEXT TO PROCESS:
-{text[:8000]}
-
-Remember: Focus on understanding, not memorization. Each flashcard should help build genuine comprehension of the subject matter. RESPOND WITH ONLY THE JSON OBJECT."""
+    def extract_text_chunks(self, pdf_bytes: bytes, chunk_size: int = 32) -> List[Tuple[int, str]]:
+        """Extract text from PDF and return chunks with their indices"""
+        path = "/tmp/flashcards_temp.pdf"
+        with open(path, "wb") as f:
+            f.write(pdf_bytes)
+        
+        chunks = []
+        current_text = []
+        chunk_index = 0
+        page_count = 0
+        
+        try:
+            for page_text in self.pdf_pages_generator(path):
+                current_text.append(page_text)
+                page_count += 1
+                
+                if page_count % chunk_size == 0:
+                    full_text = "\n\n".join(current_text)
+                    chunks.append((chunk_index, full_text))
+                    current_text = []
+                    chunk_index += 1
+            
+            # Handle remaining pages if any
+            if current_text:
+                full_text = "\n\n".join(current_text)
+                chunks.append((chunk_index, full_text))
+            
+            return chunks
+        finally:
+            # Clean up temp file
+            if os.path.exists(path):
+                os.remove(path)
 
     async def send_request_to_model(self, prompt: str) -> str:
         """Send request to the local VLLM server"""
@@ -140,8 +185,8 @@ Remember: Focus on understanding, not memorization. Each flashcard should help b
         
         headers = {"Content-Type": "application/json"}
         
-        # Wait for server to be ready
         max_retries = 30
+        
         for attempt in range(max_retries):
             try:
                 response = requests.post(
@@ -162,107 +207,127 @@ Remember: Focus on understanding, not memorization. Each flashcard should help b
             except Exception as e:
                 raise Exception(f"Request failed: {e}")
 
-    def pdf_pages_generator(self, file_path):
-        """Generator that yields text page by page"""
-        doc = fitz.open(file_path)
-    
+    async def process_text_chunk(self, chunk_data: Tuple[int, str], num_cards: int = 16) -> Dict[str, Any]:
+        """Process a single text chunk and generate flashcards"""
+        chunk_index, text = chunk_data
+        
         try:
-            for page_num in range(doc.page_count):
-                page = doc[page_num]
-                text = page.get_text()
-                yield text
+            print(f"Processing chunk {chunk_index}...")
+            prompt = self.create_flashcard_prompt(text, num_cards)
+            response = await self.send_request_to_model(prompt)
             
-        finally:
-            doc.close()
+            flashcard_json = response.strip()
+            
+            # Clean up the response
+            json_start = flashcard_json.find('{')
+            json_end = flashcard_json.rfind('}') + 1
+            
+            if json_start != -1 and json_end > json_start:
+                flashcard_json = flashcard_json[json_start:json_end]
+            
+            if flashcard_json.startswith("```json"):
+                flashcard_json = flashcard_json[7:]
+            if flashcard_json.startswith("```"):
+                flashcard_json = flashcard_json[3:]
+            if flashcard_json.endswith("```"):
+                flashcard_json = flashcard_json[:-3]
+            flashcard_json = flashcard_json.strip()
+            
+            flashcards_data = json.loads(flashcard_json)
+            
+            if "flashcards" not in flashcards_data:
+                raise ValueError("Response doesn't contain 'flashcards' key")
+
+            # Validate flashcards
+            valid_flashcards = []
+            for i, card in enumerate(flashcards_data["flashcards"]):
+                if "front" not in card or "back" not in card:
+                    print(f"Chunk {chunk_index}: Flashcard {i} missing 'front' or 'back' field")
+                    continue
+                valid_flashcards.append(card)
+
+            print(f"Generated {len(valid_flashcards)} valid flashcards for chunk {chunk_index}")
+            
+            return {
+                "success": True,
+                "chunk_index": chunk_index,
+                "flashcards": valid_flashcards,
+                "text_length": len(text)
+            }
+            
+        except json.JSONDecodeError as e:
+            print(f"Chunk {chunk_index}: JSON parsing error: {e}")
+            return {
+                "success": False,
+                "chunk_index": chunk_index,
+                "error": f"Failed to parse AI response as JSON: {e}",
+                "raw_response": response[:1000] if 'response' in locals() else "No response"
+            }
+        except Exception as e:
+            print(f"Chunk {chunk_index}: Error processing chunk: {e}")
+            return {
+                "success": False,
+                "chunk_index": chunk_index,
+                "error": str(e)
+            }
 
     @method()
     async def generate_flashcards_from_pdf(
         self, 
         pdf_bytes: bytes, 
-        num_cards: int = 20,
+        num_cards: int = 16,
+        chunk_size: int = 32
     ) -> Dict[str, Any]:
-        """
-        Main method to process PDF and generate flashcards
-        
-        Args:
-            pdf_bytes: Raw PDF file bytes
-            num_cards: Number of flashcards to generate
-            chunk_size: Size of text chunks for processing
-            
-        Returns:
-            Dictionary containing flashcards and metadata
-        """
-        
+        """Generate flashcards from PDF"""
         try:
-            current_text = []
-            curr_page = 0
-            flashcards = []
-
-            print("Extracting text from PDF...")
-            for page_text in self.pdf_pages_generator(pdf_bytes):
-                current_text.append(page_text)  
-                curr_page += 1
-                if curr_page % 32 == 0:
-                    full_text = "\n\n".join(current_text)
-                    prompt = self.create_flashcard_prompt(full_text, num_cards)
-                    response = await self.send_request_to_model(prompt)
-                    current_text = []
-                    print(f"Generated {len(response)} flashcards for chunk {curr_page // 32}")
-                    flashcards.append(response)
+            print("Extracting text chunks from PDF...")
+            text_chunks = self.extract_text_chunks(pdf_bytes, chunk_size)
+            
+            if not text_chunks:
+                return {
+                    "success": False,
+                    "error": "No text chunks extracted from PDF"
+                }
+            
+            print(f"Extracted {len(text_chunks)} chunks of {chunk_size} pages each")
+            print(f"Processing all chunks sequentially in single container...")
             
             all_flashcards = []
-
-            for flashcard in flashcards:
-                try:
-                    flashcard_json = flashcard.strip()
+            successful_chunks = 0
+            failed_chunks = 0
+            total_text_length = 0
+            
+            for chunk_index, text in text_chunks:
+                chunk_data = (chunk_index, text)
+                result = await self.process_text_chunk(chunk_data, num_cards)
                 
-                    json_start = flashcard_json.find('{')
-                    json_end = flashcard_json.rfind('}') + 1
-                
-                    if json_start != -1 and json_end > json_start:
-                        flashcard_json = flashcard_json[json_start:json_end]
-                
-                    if flashcard_json.startswith("```json"):
-                        flashcard_json = flashcard_json[7:]
-                    if flashcard_json.startswith("```"):
-                        flashcard_json = flashcard_json[3:]
-                    if flashcard_json.endswith("```"):
-                        flashcard_json = flashcard_json[:-3]
-                    flashcard_json = flashcard_json.strip()
-                
-                    flashcards_data = json.loads(flashcard_json)
-                
-                    if "flashcards" not in flashcards_data:
-                     raise ValueError("Response doesn't contain 'flashcards' key")
-
-                    for i, card in enumerate(flashcards_data["flashcards"]):
-                        if "front" not in card or "back" not in card:
-                            print(f"Flashcard {i} missing 'front' or 'back' field")
-                            continue
-
-                    all_flashcards.extend(flashcards_data["flashcards"])
-                    
-                except json.JSONDecodeError as e:
-                    print(f"JSON parsing error: {e}")
-                    print(f"Raw response: {response[:500]}...")
-                    return {
-                        "success": False,
-                        "error": f"Failed to parse AI response as JSON: {e}",
-                        "raw_response": response[:1000]
-                    }
-
-                return {
-                    "success": True,
-                    "flashcards": all_flashcards,
-                    "metadata": {
-                        "num_cards_generated": len(all_flashcards),
-                        "text_length": len(full_text),
-                        "processed_text_length": len(full_text)
-                    }
+                if result.get("success", False):
+                    all_flashcards.extend(result["flashcards"])
+                    successful_chunks += 1
+                    total_text_length += result.get("text_length", 0)
+                    print(f"Chunk {chunk_index} completed: {len(result['flashcards'])} flashcards")
+                else:
+                    failed_chunks += 1
+                    print(f"Chunk {chunk_index} failed: {result.get('error', 'unknown error')}")
+            
+            print(f"\nProcessing complete!")
+            print(f"Successful chunks: {successful_chunks}")
+            print(f"Failed chunks: {failed_chunks}")
+            print(f"Total flashcards: {len(all_flashcards)}")
+            
+            return {
+                "success": True,
+                "flashcards": all_flashcards,
+                "metadata": {
+                    "num_cards_generated": len(all_flashcards),
+                    "total_chunks": len(text_chunks),
+                    "successful_chunks": successful_chunks,
+                    "failed_chunks": failed_chunks,
+                    "total_text_length": total_text_length,
+                    "chunk_size": chunk_size,
                 }
+            }
                 
-            
-            
         except Exception as e:
             print(f"Error in generate_flashcards_from_pdf: {e}")
             return {
@@ -270,16 +335,10 @@ Remember: Focus on understanding, not memorization. Each flashcard should help b
                 "error": str(e)
             }
 
-# Local entrypoint for testing
 @app.local_entrypoint()
-async def test_pdf_flashcards(pdf_path: str = None, num_cards: int = 10):
-    """
-    Test the PDF flashcard generator locally
+def pdf_flashcards(pdf_path: str = None, num_cards: int = 32, chunk_size: int = 16):
+    from make_cards import convert_json_file_to_anki
     
-    Usage:
-        modal run flashcards.py::test_pdf_flashcards --pdf-path="path/to/your.pdf" --num-cards=15
-    """
-
     if pdf_path is None:
         print("Please provide a PDF path using --pdf-path argument")
         return
@@ -294,24 +353,41 @@ async def test_pdf_flashcards(pdf_path: str = None, num_cards: int = 10):
     generator = FlashcardGenerator()
     
     print(f"Processing PDF: {pdf_path}")
-    result = generator.generate_flashcards_from_pdf.remote(pdf_bytes, num_cards)
+    print(f"Chunk size: {chunk_size} pages")
+    print(f"Cards per chunk: {num_cards}")
+    
+    result = generator.generate_flashcards_from_pdf.remote(pdf_bytes, num_cards, chunk_size)
     
     if result["success"]:
-        print(f"\n✅ Successfully generated {len(result['flashcards'])} flashcards!")
-        print(f"Metadata: {result['metadata']}")
+        metadata = result['metadata']
+        print(f"\nSuccessfully generated {len(result['flashcards'])} flashcards!")
+        print(f"Processing stats:")
+        print(f"   - Total chunks: {metadata['total_chunks']}")
+        print(f"   - Successful: {metadata['successful_chunks']}")
+        print(f"   - Failed: {metadata['failed_chunks']}")
+        print(f"   - Chunk size: {metadata['chunk_size']} pages")
+        print(f"   - Total text length: {metadata['total_text_length']} chars")
         
+        # Show sample flashcards
+        print(f"\nSample flashcards:")
         for i, card in enumerate(result["flashcards"][:3]):
-            print(f"\n--- Flashcard {i+1} ---")
-            print(f"Front: {card['front']}")
-            print(f"Back: {card['back']}")
+            print(f"\nSample Flashcard {i+1} ---")
+            print(f"Q: {card['front']}")
+            print(f"A: {card['back']}")
         
         # Save to JSON file
         output_file = pdf_path.replace(".pdf", "_flashcards.json")
         with open(output_file, "w") as f:
             json.dump(result, f, indent=2)
-        print(f"\n💾 Flashcards saved to: {output_file}")
+        print(f"\nFlashcards saved to: {output_file}")
         
     else:
-        print(f"❌ Error generating flashcards: {result['error']}")
+        print(f"Error generating flashcards: {result['error']}")
         if "raw_response" in result:
-            print(f"Raw AI response: {result['raw_response']}")
+            print(f"Raw response: {result['raw_response']}")
+    
+
+    print(f"Converting to Anki...")
+    convert_json_file_to_anki(output_file, pdf_path.replace(".pdf", "_flashcards.apkg"))
+
+    print(f"Anki file saved to: {pdf_path.replace(".pdf", "_flashcards.apkg")}")

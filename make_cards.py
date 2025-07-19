@@ -6,11 +6,9 @@ from typing import Dict, List, Optional
 
 class JSONToAnkiConverter:
     def __init__(self):
-        # Generate unique IDs using timestamp
         self.model_id = int(time.time() * 1000000)
         self.deck_id = int(time.time() * 1000000) + 1
         
-        # Create the card model (template)
         self.model = genanki.Model(
             self.model_id,
             'Basic Flashcard Model',
@@ -187,7 +185,6 @@ class JSONToAnkiConverter:
                 print(f"Back: {cards[0]['back'][:100]}...")
 
 
-# Example usage functions
 def convert_json_file_to_anki(json_file_path: str, output_name: str = None):
     """Simple function to convert a JSON file to Anki cards"""
     converter = JSONToAnkiConverter()
@@ -197,50 +194,3 @@ def convert_json_string_to_anki(json_string: str, output_name: str = "flashcards
     """Simple function to convert a JSON string to Anki cards"""
     converter = JSONToAnkiConverter()
     return converter.convert_string_to_anki(json_string, output_name, deck_name)
-
-
-if __name__ == "__main__":
-    # Example usage
-    
-    # Method 1: Convert from file
-    # convert_json_file_to_anki("paste.txt", "program_optimization_cards.apkg")
-    
-    # Method 2: Convert from your provided JSON string
-    json_data = '''
-    {
-      "success": true,
-      "flashcards": [
-        {
-          "front": "What is the definition of 'work' in the context of program optimization?",
-          "back": "Work is the sum total of all operations executed by a program on a given input. It represents the computational effort required to complete a task."
-        },
-        {
-          "front": "How can algorithm design significantly reduce work? Provide an example.",
-          "back": "Choosing a more efficient algorithm reduces work, e.g., replacing an O(n²) bubble sort with an O(n log n) merge sort eliminates redundant comparisons, drastically cutting total operations."
-        }
-      ],
-      "metadata": {
-        "num_cards_generated": 2,
-        "text_length": 1000,
-        "processed_text_length": 500
-      }
-    }
-    '''
-    
-    converter = JSONToAnkiConverter()
-    
-    # Print summary
-    data = converter.load_json_string(json_data)
-    converter.print_summary(data)
-    
-    # Convert to Anki
-    success = converter.convert_string_to_anki(
-        json_data, 
-        "program_optimization.apkg", 
-        "Program Optimization"
-    )
-    
-    if success:
-        print("\n✅ Conversion completed successfully!")
-    else:
-        print("\n❌ Conversion failed!")
