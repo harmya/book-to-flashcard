@@ -18,3 +18,15 @@ To specify the number of cards per chunk:
 modal run flashcards.py::pdf_flashcards --pdf-path="path/to/your.pdf" --num-cards=15
 ```
 
+## Example Run:
+
+```text
+Processing PDF: ../data/dist_sys.pdf
+Chunk size: 32 pages
+Cards per chunk: 16
+
+Starting VLLM server with command....
+```
+
+
+

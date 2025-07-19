@@ -1,0 +1,997 @@
+{
+  "success": true,
+  "flashcards": [
+    {
+      "front": "What are the four database isolation levels and their guarantees?",
+      "back": "1. Serializable: Transactions execute in strict sequence. 2. Repeatable Read: Data read remains consistent for the transaction. 3. Read Committed: Only committed data is visible. 4. Read Uncommitted: Uncommitted data can be read. These levels prevent phenomena like dirty reads, non-repeatable reads, and phantom reads using MVCC and locks."
+    },
+    {
+      "front": "How does MVCC ensure isolation in Repeatable Read level?",
+      "back": "MVCC uses row versions with transaction IDs and roll_pointers. When a transaction starts, a Read View is created. Subsequent reads use this view, ignoring uncommitted changes. Modified rows create new versions, and older transactions see previous committed states."
+    },
+    {
+      "front": "What are the core differences between IaaS, PaaS, and SaaS?",
+      "back": "IaaS provides raw infrastructure (e.g., servers/storage). PaaS offers development platforms with tools/frameworks (e.g., Heroku). SaaS delivers complete software applications (e\u77a0e, Gmail). Users manage less infrastructure and software as you move from IaaS to SaaS."
+    },
+    {
+      "front": "Why is blockchain considered for the future of online payments?",
+      "back": "Blockchain provides decentralized, transparent ledgers (e.g., Bitcoin's blockchain). Transactions are validated through consensus, eliminating intermediaries. The 'golden source of truth' (blockchain) acts as an immutable journal, enabling trust without traditional financial institutions."
+    },
+    {
+      "front": "How does SSO (Single Sign-On) work across multiple services?",
+      "back": "1. User accesses a service (e.g., Gmail), which redirects to the SSO auth server. 2. User logs in to SSO, which generates a session token. 3. Services validate the token with the auth server. Subsequent services reuse the token, avoiding re-authentication."
+    },
+    {
+      "front": "What are two critical flaws in naive password storage practices?",
+      "back": "1. Storing plaintext passwords allows direct access for attackers. 2. Hashing without salting enables rainbow table attacks. Effective storage requires salted hashes (e.g., bcrypt) to resist precomputed attacks."
+    },
+    {
+      "front": "What enables HTTPS to secure HTTP communications?",
+      "back": "HTTPS uses TLS/SSL for encryption. The process: 1. TLS handshake negotiates ciphers and keys. 2. Server sends certificate for authentication. 3. Symmetric encryption secures data. HTTP/3 (QUIC) improves performance via UDP and reduced latency."
+    },
+    {
+      "front": "What trade-off exists between latency and consistency in distributed systems?",
+      "back": "The CAP theorem states that systems can prioritize either consistency (all nodes see same data) or availability (responsive despite node failures), but not both during network partitions. Eventual consistency systems trade immediate consistency for high availability."
+    },
+    {
+      "front": "How do microservices collaborate while maintaining independence?",
+      "back": "1. APIs (REST/gRPC) for service-to-service communication. 2. Event-driven architectures using message queues (Kafka) or pub/sub. 3. Shared databases avoided via service ownership patterns. 4. Circuit breakers and retries handle failures gracefully."
+    },
+    {
+      "front": "What differentiates containerization (e.g., Docker) from virtualization (e.g., VMware)?",
+      "back": "Virtualization uses hypervisors to create full VMs with OS kernels, isolating hardware. Containerization shares the host OS kernel, isolating processes via namespaces. Containers are lighter (faster startup/less overhead) but require OS compatibility."
+    },
+    {
+      "front": "Why is Redis faster than Memcached for certain use cases?",
+      "back": "Redis supports data structures (lists, hashes, sorted sets) and persistence (RDB/AOF), while Memcached stores only key-value pairs in memory. Redis' in-memory operations and advanced features (e.g., pub/sub, Lua scripting) enable faster complex operations."
+    },
+    {
+      "front": "What are the three types of message delivery semantics?",
+      "back": "1. At-most-once: Messages may be lost but never redelivered. 2. At-least-once: Messages are delivered but may be duplicated. 3. Exactly-once: Guaranteed delivery without duplicates (requires idempotency and tracking)."
+    },
+    {
+      "front": "How does CDN (Content Delivery Network) reduce latency?",
+      "back": "CDNs cache static content (e.g., images, videos) on edge servers globally. When a user requests content, it\u2019s served from the nearest edge node instead of the origin server, reducing round-trip times and bandwidth costs."
+    },
+    {
+      "front": "What is the purpose of read replicas in database design?",
+      "back": "Read replicas offload read traffic from the primary database. Writes go to the primary (master), which replicates to slaves. This improves scalability and availability for read-heavy workloads (e.g., reporting, user queries)."
+    },
+    {
+      "front": "How do vertical and horizontal partitioning address scaling?",
+      "back": "Vertical: Adds more resources (CPU/RAM) to existing nodes. Horizontal: Adds more nodes (sharding) to distribute load. Vertical is cost-effective for single-server scaling, while horizontal supports massive scale but requires data partitioning strategies."
+    },
+    {
+      "front": "What makes SSDs faster than HDDs?",
+      "back": "SSDs use flash memory with no moving parts, enabling faster read/write speeds (lower latency) and better power efficiency. HDDs rely on spinning disks and mechanical arms, which are slower and more prone to mechanical failure."
+    },
+    {
+      "front": "Why is optimistic locking necessary in concurrent systems?",
+      "back": "Optimistic locking prevents conflicts in scenarios where transactions rarely collide. It uses version numbers or timestamps: before updating a record, the system checks if the version matches the original read. Mismatches trigger retries/abortions."
+    },
+    {
+      "front": "What is a cache miss attack and how can it be mitigated?",
+      "back": "A cache miss attack (e.g., Flush+Reload) exploits timing differences between cache hits/misses to infer sensitive data (e.g., encryption keys). Mitigation strategies include: 1. Constant-time algorithms to eliminate timing side channels. 2. Cache partitioning. 3. Randomizing cache content."
+    },
+    {
+      "front": "How does Amazon's software development process ensure scalability?",
+      "back": "Amazon uses microservices and the 'Two Pizzas' team model for small, autonomous teams. Services are designed for failure with self-healing infrastructures (e.g., Auto Scaling). Deployment uses blue-green canaries to minimize downtime, and systems are built for eventual consistency."
+    },
+    {
+      "front": "What strategies prevent duplicate URL crawling at scale?",
+      "back": "1. Use a bloom filter to probabilistically check for existing URLs before crawling. 2. Deduplicate in a distributed database (e.g., HBase) with checksum hashes. 3. Implement a distributed lock to block concurrent crawling of the same URL."
+    },
+    {
+      "front": "How does Kafka achieve high throughput?",
+      "back": "Kafka uses: 1. Append-only logs for sequential writes (fast I/O). 2. Partitioning for parallelism across brokers. 3. Asynchronous writes to batch data. 4. Consumer pull model reducing network overhead. Replication ensures durability without sacrificing speed."
+    },
+    {
+      "front": "What are the core differences between SOAP, REST, GraphQL, and RPC?",
+      "back": "SOAP: XML-based, strict contract (WSDL), requires middleware. REST: Stateless, uses HTTP methods (GET/POST), returns JSON/XML. GraphQL: Query language for flexible data fetching, reduces over-fetching. RPC: Direct procedure calls (e.g., gRPC), binary formats, service-oriented."
+    },
+    {
+      "front": "How does a modern browser render a webpage?",
+      "back": "1. Parse HTML into the DOM tree. 2. CSSOM built from parsed CSS. 3. Combine DOM/CSSOM into render tree. 4. Layout: Calculate positions/sizes of elements. 5. Paint: Convert nodes into pixels on the screen. 6. Composite layers for GPU acceleration."
+    },
+    {
+      "front": "Why is erasure coding preferred over replication in certain storage systems?",
+      "back": "Erasure coding (EC) stores data shards with parity chunks. For example, EC(n,k) splits data into k shards and adds n-k parity shards. Only k shards are needed for reconstruction. This provides similar fault tolerance to replication but with lower storage overhead (e.g., EC(6,3) uses 50% less space than 3x replication)."
+    },
+    {
+      "front": "How does a stock exchange achieve microsecond latency?",
+      "back": "1. Co-location of trading servers near exchange hardware. 2. Optimized hardware (dedicated networks, FPGA-based matching engines). 3. Minimal data processing (e.g., flat binary protocols). 4. Pre-trade validation to reduce compute during peak times."
+    },
+    {
+      "front": "What is the 'at-most-once' delivery guarantee useful for?",
+      "back": "At-most-once is used for idempotent operations where duplicates are harmless (e.g., logging). Messages are either delivered once or lost. This avoids processing the same message multiple times, which could cause inconsistencies in non-idempotent systems."
+    },
+    {
+      "front": "How do CDNs handle dynamic content?",
+      "back": "CDNs traditionally cache static content, but dynamic content (e.g., personalized pages) can be handled via: 1. Edge computing (running code at edge nodes). 2. Dynamic cache keys combining static and user-specific data. 3. Prefetching common dynamic responses."
+    },
+    {
+      "front": "What is optimistic concurrency control in databases?",
+      "back": "Optimistic concurrency allows simultaneous reads/edits without locks. Before committing a change, the system checks a version number or timestamp. If the data was modified since reading, the transaction aborts. This reduces lock contention for low-conflict scenarios."
+    },
+    {
+      "front": "How does Redis' in-memory storage enable high performance?",
+      "back": "Redis stores data entirely in RAM, avoiding disk I/O latency. Operations are executed in memory with O(1) or O(N) time complexity for most data structures. Persistence is periodically written to disk (RDB) or logged (AOF), but doesn't block real-time operations."
+    },
+    {
+      "front": "What are the three pillars of CAP theorem?",
+      "back": "Consistency: All nodes see the same data. Availability: The system remains operational despite node failures. Partition tolerance: The system continues functioning even if network partitions split nodes. Distributed systems must choose two."
+    },
+    {
+      "front": "How does a payment reconciliation system work?",
+      "back": "Reconciliation matches transaction records (e.g., payment processors, banks) to detect discrepancies. Steps: 1. Fetch all transactions from all sources. 2. Match entries by timestamp/ID. 3. Flag unmatched items (e.g., failed transactions, fraud). 4. Adjust balances or investigate issues."
+    },
+    {
+      "front": "What is the purpose of the TLS handshake in HTTPS?",
+      "back": "The TLS handshake establishes an encrypted connection between client and server by exchanging cipher suites, verifying certificates, and negotiating session keys. It ensures data privacy and integrity by switching to symmetric encryption for efficiency."
+    },
+    {
+      "front": "Why does HTTPS use symmetric encryption for data transmission after initial asymmetric steps?",
+      "back": "Asymmetric encryption is computationally expensive and unidirectional, making it unsuitable for long data transfers. Symmetric encryption reduces server load and allows bidirectional secure communication using a shared session key."
+    },
+    {
+      "front": "Describe the role of the SSL certificate during HTTPS handshakes.",
+      "back": "The SSL certificate contains the server's public key and identity details (host name, expiry). The client validates it to ensure trust, then uses the public key to securely exchange the session key for symmetric encryption."
+    },
+    {
+      "front": "How does HTTPS protect against eavesdropping?",
+      "back": "HTTPS encrypts all transmitted data with symmetric keys. If intercepted, only encrypted binary data is captured. The public/private key pair ensures the session key remains private, preventing decryption by third parties."
+    },
+    {
+      "front": "What causes the performance overhead in HTTPS compared to HTTP?",
+      "back": "HTTPS incurs overhead from cryptographic operations (asymmetric encryption during handshake) and increased network round-trips. While symmetric encryption reduces this during data transfer, initial handshake steps add latency."
+    },
+    {
+      "front": "When would you choose a key-value database over a relational one?",
+      "back": "Use a key-value database for high-speed simple data storage/access (e.g., user sessions or caching). Its lack of complex queries makes it unsuitable for relational data requiring joins or transactions."
+    },
+    {
+      "front": "Why are columnar databases efficient for analytics workloads?",
+      "back": "Columnar databases store data by columns rather than rows, optimizing read operations for analytical queries that aggregate data across many rows. This reduces I/O for operations like SUM or AVG."
+    },
+    {
+      "front": "What defines an unstructured database workload?",
+      "back": "Unstructured data includes blobs like images or videos, which lack inherent organization. Databases handling these prioritize storage scalability over structured querying capabilities."
+    },
+    {
+      "front": "Why is a time-series database suitable for stock market data?",
+      "back": "Time-series databases efficiently store and query timestamped data. They optimize for high write throughput (e.g., millisecond-level trades) and fast time-range queries (e.g., hourly trends)."
+    },
+    {
+      "front": "What distinguishes a relational database from a document database?",
+      "back": "Relational databases enforce structured schemas with ACID transactions, while document databases store semi-structured data (e.g., JSON) without fixed schemas. Document databases excel in agile environments with evolving data requirements."
+    },
+    {
+      "front": "What is a primary difference between processes and threads?",
+      "back": "Processes have independent memory spaces and resources, while threads within the same process share memory. Processes are isolated (crashing one doesn\u2019t affect others), but threads risk data corruption due to shared state."
+    },
+    {
+      "front": "Why is inter-thread communication faster than inter-process communication?",
+      "back": "Threads share memory space, allowing direct data access without copying or serialization. Processes require inter-process communication (IPC) mechanisms like pipes or sockets, adding overhead."
+    },
+    {
+      "front": "What are the disadvantages of using processes over threads?",
+      "back": "Processes consume more memory and startup time due to separate address spaces. Context switching between processes is costlier than between threads, making them less efficient for fine-grained parallel tasks."
+    },
+    {
+      "front": "How does context switching differ between processes and threads?",
+      "back": "Process context switching requires reloading separate memory spaces and CPU state, while thread context switching only changes execution state within shared memory. Processes also involve kernel mode transitions, increasing overhead."
+    },
+    {
+      "front": "When would you prefer multiple processes over threads in an application?",
+      "back": "Use processes for tasks requiring isolation (e.g., preventing a tab crash from crashing an entire browser). Processes are also preferred for CPU-intensive workloads needing full core utilization without thread synchronization bottlenecks."
+    },
+    {
+      "front": "What role does the Fanout service play in Twitter's architecture?",
+      "back": "The Fanout service processes incoming tweets, replicates them to follower timelines, and caches data in Redis. It ensures tweets are distributed to all relevant user timelines before being served via the Timeline service."
+    },
+    {
+      "front": "How does Twitter's Timeline service function?",
+      "back": "The Timeline service retrieves Redis-stored timeline data for a user's home feed. It aggregates tweets from followed accounts and manages caching, enabling quick delivery to clients requesting their timeline."
+    },
+    {
+      "front": "Explain the flow of data in Twitter's Search & Discovery components.",
+      "back": "The Ingester tokenizes tweets for indexing. Earlybird stores search indices. Blender compiles search results and discovery timelines (e.g., 'who to follow'), combining relevance and engagement metrics."
+    },
+    {
+      "front": "Why is Redis used in Twitter's tweet lifecycle?",
+      "back": "Redis provides fast in-memory storage for real-time data. It caches timelines and tweet metadata, enabling low-latency read access for user feeds. Its durability isn\u2019t critical here since data can be regenerated."
+    },
+    {
+      "front": "What challenge does Operational Transformation (OT) address in Google Docs?",
+      "back": "OT resolves concurrent edits by transforming operations (e.g., insert/delete) to maintain consistency across clients. It ensures all users see the same document state even after simultaneous changes."
+    },
+    {
+      "front": "Why does Google Docs use Operational Transformation (OT) over CRDT?",
+      "back": "OT maintains a centralized operation log, simplifying conflict resolution through deterministic transformation. CRDT's purely peer-to-peer approach requires more complex distributed state management, which may have been less mature at the time."
+    },
+    {
+      "front": "What makes blue-green deployment safer for rollbacks?",
+      "back": "Blue-green maintains two identical environments (production and staging). Switching traffic between them allows instant rollbacks by rerouting traffic back to the previous environment without data loss."
+    },
+    {
+      "front": "What is the main risk in canary deployments?",
+      "back": "Canary deployments test new versions on a subset of users in production, risking negative impact if the new version has bugs. Monitoring must detect issues quickly to roll back before affecting more users."
+    },
+    {
+      "front": "How does A/B testing differ from canary deployment?",
+      "back": "A/B testing compares two versions by exposing each to a controlled user segment to measure performance differences, while canary deployment gradually expands the new version's user base to monitor stability."
+    },
+    {
+      "front": "Why is multi-service deployment risky?",
+      "back": "Upgrading all services simultaneously complicates dependency management and troubleshooting. If a failure occurs, identifying the root cause among multiple services is difficult, and rolling back requires coordinated effort."
+    },
+    {
+      "front": "What are core requirements for globally unique IDs in social media?",
+      "back": "IDs must be 64-bit numerical values to fit in systems like Twitter. They need global uniqueness across all servers, sortable by creation time, and scalable to handle high write rates without collisions."
+    },
+    {
+      "front": "Why aren't UUIDs suitable for social media IDs?",
+      "back": "UUIDs are 128-bit and include non-sequential elements (e.g., random numbers or MAC addresses), making them harder to sort by time. Social platforms require chronological ordering for timelines, so 64-bit time-based IDs are preferred."
+    },
+    {
+      "front": "How do time-based IDs ensure scalability?",
+      "back": "By embedding a timestamp, IDs can be generated independently across distributed servers without central coordination. The time component ensures ordering, and remaining bits provide enough entropy to avoid collisions even at high rates."
+    },
+    {
+      "front": "Why does 'Head First Design Patterns' use visual explanations?",
+      "back": "Software design patterns are abstract concepts embedded in code. Visual diagrams, annotations, and step-by-step examples help make these invisible structures tangible, aiding understanding for learners overwhelmed by theoretical texts."
+    },
+    {
+      "front": "What makes 'Head First Design Patterns' effective for beginners?",
+      "back": "It addresses learning barriers by using student-centric explanations and gradually building concepts. The 'Guru and Student' dialogue format preemptively answers common questions, reducing confusion and fostering active engagement."
+    },
+    {
+      "front": "What factors should be considered when selecting a database for a new project?",
+      "back": "Evaluate data structure (structured, semi-structured, unstructured), workload type (OLTP/OLAP), scalability needs, querying patterns, and consistency requirements. For example, a graph database suits social network relationships, while key-value stores fit caching use cases."
+    },
+    {
+      "front": "Why might a simple feature like Slack's notification system have a complex underlying design?",
+      "back": "Users perceive simplicity because the system manages complexity (e.g., prioritization, deduplication, user preferences) transparently. Engineers must balance reliability, scalability, and user experience, which requires layered technical solutions."
+    },
+    {
+      "front": "Why are idempotent APIs crucial for safe retries in distributed systems?",
+      "back": "Idempotent operations guarantee that repeated identical requests produce the same result as a single execution. This eliminates unintended side effects (e.g., charging a customer twice) when retries occur due to network failures."
+    },
+    {
+      "front": "How does HMAC authentication ensure data integrity?",
+      "back": "HMAC uses a shared secret key and hash function to generate a signature. Any tampering with the request data alters the computed hash, which the server detects by re-generating the signature using its copy of the secret key."
+    },
+    {
+      "front": "Why include request timestamps in HMAC signature generation?",
+      "back": "Timestamps prevent replay attacks by ensuring requests have a time-bound validity. Servers can reject outdated requests, maintaining security against reused signatures from earlier communications."
+    },
+    {
+      "front": "Compare orchestration and choreography patterns in microservices collaboration.",
+      "back": "Orchestration uses a centralized authority (e.g., conductor) to coordinate services, managing transactions and error handling. Choreography relies on services following predefined rules (e.g., events) with no central controller, offering higher scalability but complexity in fault tolerance."
+    },
+    {
+      "front": "What's the key difference between virtualization and containerization?",
+      "back": "Virtualization uses a hypervisor to abstract hardware, enabling multiple OS instances. Containerization virtualizes the OS layer, sharing the host OS kernel, resulting in lighter weight, faster startup, and lower resource overhead."
+    },
+    {
+      "front": "How do Bloom filters reduce database load during URL crawling?",
+      "back": "Bloom filters probabilistically check if a URL exists in a dataset using bit vectors and hash functions. They trade minimal false positives for near-zero false negatives, reducing unnecessary database queries at scale."
+    },
+    {
+      "front": "What trade-offs exist when choosing the number of hash functions for a Bloom filter?",
+      "back": "More hash functions reduce false positives but increase computation and memory use. The optimal number balances accuracy (e.g., for n elements, k = (m/n) * ln2) to minimize storage and error rates."
+    },
+    {
+      "front": "Why is an SSD faster than an HDD for data access?",
+      "back": "SSDs have no moving mechanical parts, enabling instantaneous random access and parallel read/write operations. HDDs rely on spinning platters and read heads, introducing latency and slower sequential access."
+    },
+    {
+      "front": "What advantage does containerization offer over virtualization for cloud deployments?",
+      "back": "Containers share the host OS kernel, reducing memory and storage overhead. They start faster and scale more efficiently in microservices architectures, whereas VMs require full OS instances and more resources."
+    },
+    {
+      "front": "How does orchestration handle transaction management in distributed services?",
+      "back": "The orchestrator centrally manages transactions, ensuring atomicity across services. It rolls back failures and coordinates steps, unlike choreography, which requires individual services to implement fault handling."
+    },
+    {
+      "front": "Why is timeout management critical in distributed systems?",
+      "back": "Timeouts prevent indefinite waits for responses in unreliable networks. Combined with retries and backoff strategies (e.g., exponential backoff with jitter), they balance responsiveness and system stability during transient failures."
+    },
+    {
+      "front": "What problem do caching strategies address in high-availability systems?",
+      "back": "Caching reduces latency and load on backend systems by storing frequently accessed data in fast storage (e.g., Redis). It mitigates bottlenecks and ensures scalability during traffic spikes but requires invalidation strategies to avoid stale data."
+    },
+    {
+      "front": "How does HMAC's reliance on shared secrets compare to token-based auth?",
+      "back": "HMAC requires the client and server to share a private key, while token-based systems use a secure token (e.g., JWT) issued by an authentication server. HMAC avoids token storage but demands secure key distribution."
+    },
+    {
+      "front": "What challenge does bare-metal infrastructure solve compared to virtualization?",
+      "back": "Bare-metal offers direct hardware access without hypervisor overhead, maximizing performance for CPU-intensive tasks. It eliminates VM resource contention but lacks the agility of virtualized or containerized environments."
+    },
+    {
+      "front": "Why use serverless functions (e.g., AWS Lambda) in big data pipelines?",
+      "back": "Serverless abstracts infrastructure management, enabling event-driven processing of data streams. They scale automatically, reduce operational costs, and integrate well with other cloud services (e.g., Kinesis, S3)."
+    },
+    {
+      "front": "How does a Bloom filter handle false positives?",
+      "back": "Bloom filters accept a tunable false positive rate (e.g., 1%). To confirm membership, the final step must query the actual dataset. The trade-off prioritizes space efficiency over absolute accuracy."
+    },
+    {
+      "front": "What is the primary benefit of choreography over orchestration in microservices?",
+      "back": "Choreography decouples services by removing central control, enabling independent evolution and scalability. Each service operates autonomously based on event-driven communication, reducing single points of failure."
+    },
+    {
+      "front": "Why is high availability critical for cloud data planes?",
+      "back": "Mission-critical systems (e.g., payment processing) require uptime exceeding 99.999% ('five nines'). High availability ensures continuous operation through redundancy, failover mechanisms, and automatic recovery."
+    },
+    {
+      "front": "What is a key limitation of using a Set for URL deduplication at scale?",
+      "back": "Sets are fast but memory-intensive for large datasets. Bloom filters offer a more space-efficient probabilistic alternative, making them preferable for massive-scale applications like web crawlers."
+    },
+    {
+      "front": "How does idempotent API design support distributed systems?",
+      "back": "Idempotent endpoints enable retries without unintended effects, critical for eventual consistency. For example, a 'delete' request can safely retry without data corruption, even if the initial response was lost."
+    },
+    {
+      "front": "What makes microservices deployments risky without rollback safety?",
+      "back": "Deployments can introduce bugs affecting availability or data integrity. Safe rollbacks ensure rapid recovery to a working state, minimizing downtime and user impact during iterative updates."
+    },
+    {
+      "front": "Why is continuous delivery critical for modern software teams?",
+      "back": "It automates testing and deployment pipelines to reduce manual errors and accelerate release cycles. Teams can iterate quickly while maintaining reliability through rigorous checks at each stage."
+    },
+    {
+      "front": "How does distributed system complexity impact failure modes?",
+      "back": "Distributed systems face challenges like network partitions, clock skew, and partial failures. Consensus algorithms (e.g., Raft, Paxos) and eventual consistency models address these to ensure robustness."
+    },
+    {
+      "front": "What advantage do containers provide for deployment consistency?",
+      "back": "Containers encapsulate dependencies, ensuring that an application runs identically across development, testing, and production environments. This eliminates 'it works on my machine' discrepancies."
+    },
+    {
+      "front": "Why is data normalization critical in big data processing?",
+      "back": "Normalization standardizes data formats, enabling aggregation and analysis across heterogeneous sources. It reduces redundancy and ensures consistent queries, crucial for building accurate dashboards and insights."
+    },
+    {
+      "front": "How does a Bloom filter's bit vector size affect performance?",
+      "back": "Larger bit vectors reduce false positives but increase memory use. The optimal size balances error tolerance with storage constraints, often calculated using formulas based on expected elements and desired false positive rate."
+    },
+    {
+      "front": "What distinguishes a conductor's role in orchestration?",
+      "back": "The conductor (orchestrator) sequences service interactions, manages transactions, and handles errors centrally. It acts as a single source of truth for workflow state, unlike choreography's event-driven autonomy."
+    },
+    {
+      "front": "Why is virtualization still used despite containerization's rise?",
+      "back": "Virtualization isolates OS environments completely, offering strong security boundaries and compatibility for legacy software. It remains essential for multi-OS hosting and environments requiring full hardware abstraction."
+    },
+    {
+      "front": "How do backoff with jitter strategies prevent cascading failures?",
+      "back": "Randomized delays (jitter) in retry attempts distribute load unevenly, preventing synchronized retries from overwhelming systems. This reduces contention and stabilizes availability during high error rates."
+    },
+    {
+      "front": "What is the key difference between 'at-most once' and 'at-least once' message delivery semantics?",
+      "back": "At-most once allows message loss (no redelivery), while at-least once ensures no loss but may cause duplicates. The trade-off is between system simplicity (at-most) vs reliability (at-least)."
+    },
+    {
+      "front": "In which scenario is 'at-most once' delivery appropriate?",
+      "back": "Use cases with acceptable data loss, like monitoring metrics or logging. The system can afford to miss some messages without critical consequences."
+    },
+    {
+      "front": "How does 'at-least once' delivery handle duplicates?",
+      "back": "The consumer must implement deduplication, often using unique message IDs or database checks. This requires the downstream system to handle idempotency."
+    },
+    {
+      "front": "Why is 'exactly once' delivery difficult to implement?",
+      "back": "Requires atomicity across sender and receiver systems. Coordinated commit protocols are needed to guarantee no duplicates or loss, increasing complexity and latency."
+    },
+    {
+      "front": "What systems critically require 'exactly once' delivery?",
+      "back": "Financial transactions (payments, trading) where duplicates could cause financial discrepancies. Downstream systems must reject duplicates without idempotency support."
+    },
+    {
+      "front": "Compare message queues vs event streaming platforms like Kafka in delivery guarantees.",
+      "back": "Message queues (e.g., RabbitMQ) prioritize ordered delivery and single consumers. Event streams (Kafka/Pulsar) support durable, multi-subscriber replay of events with flexibility in handling semantics."
+    },
+    {
+      "front": "What is vertical partitioning and how does it differ from horizontal partitioning?",
+      "back": "Vertical partitioning splits columns into separate tables (same number of rows). Horizontal partitioning (sharding) splits rows into tables with the same columns (e.g., by user region)."
+    },
+    {
+      "front": "Explain hash-based sharding with an example routing algorithm.",
+      "back": "Hash-based sharding uses a function like USER_ID mod 2 to distribute rows. For example, User IDs 1 and 3 hash to shard 1, while 2 and 4 go to shard 2, ensuring even distribution."
+    },
+    {
+      "front": "Why does horizontal partitioning shorten query response times?",
+      "back": "By reducing the number of rows per shard, queries scan less data. For example, a 100k-row table split into two shards only requires querying 50k rows at a time."
+    },
+    {
+      "front": "What problem does uneven distribution (hotspots) create in sharding?",
+      "back": "Overloaded shards become performance bottlenecks. For example, if most queries target shard 1 due to poor partitioning, it becomes a 'hot' shard affecting overall system throughput."
+    },
+    {
+      "front": "How does a CDN improve website load times for global users?",
+      "back": "CDN edge servers cache content near users. For example, a New York user accesses a London-hosted site via a nearby CDN server, reducing latency compared to direct origin server requests."
+    },
+    {
+      "front": "Describe the DNS resolution steps for a CDN request.",
+      "back": "1. Browser checks local DNS cache. 2. If missing, queries ISP's DNS resolver. 3. Resolver recursively finds the CDN's load balancer. 4. Load balancer selects the nearest edge server, which provides the IP address."
+    },
+    {
+      "front": "What distinguishes static vs dynamic content in a CDN?",
+      "back": "Static content (e.g., images, HTML) is cached and served directly. Dynamic content (e.g., personalized data) requires edge computing; the CDN forwards requests to the origin server for real-time processing."
+    },
+    {
+      "front": "How might a CDN prevent video piracy?",
+      "back": "Implementing geoblocking, token-based authentication, and encrypted streaming. For example, videos are only playable via authenticated tokens valid for a specific user session and region."
+    },
+    {
+      "front": "Explain erasure coding using the 4+2 example.",
+      "back": "Data is split into 4 chunks (d1-d4). Two parity chunks (p1/p2) are calculated using mathematical formulas. If d3 and d4 are lost, p1/p2 and d1/d2 are used to reconstruct the missing data via inverse formulas."
+    },
+    {
+      "front": "How does erasure coding improve durability compared to replication?",
+      "back": "Erasure coding requires fewer redundant storage blocks (e.g., 50% overhead for 4+2 vs 200% for 3x replication). The 11-nines durability comes from reconstructing data even if multiple nodes fail simultaneously."
+    },
+    {
+      "front": "What storage overhead does 4+2 erasure coding require?",
+      "back": "For every 4 data chunks, 2 parity chunks are stored, totaling 6 chunks. This represents a 50% storage overhead (2/4)."
+    },
+    {
+      "front": "Why do forex markets have multiple layers (retail, wholesale, top-level)?",
+      "back": "Each layer handles aggregated transactions. Retail pools (e.g., PayPal) send aggregated orders to wholesale banks (e.g., Bank E), which then interact with top-tier multinational banks for large-scale foreign exchange."
+    },
+    {
+      "front": "Outline the steps when converting USD to EUR via a payment provider.",
+      "back": "1. Buyer sends USD to provider's bank. 2. Provider converts USD to EUR via a forex bank. 3. Funds are routed through wholesale/top-level markets. 4. EUR is deposited into the seller's account."
+    },
+    {
+      "front": "What challenge arises if a forex provider's funding pool lacks EUR?",
+      "back": "The provider must source EUR from the wholesale market, potentially incurring higher exchange fees or delays if large volumes are needed beyond their immediate reserves."
+    },
+    {
+      "front": "What makes designing globally unique S3 bucket names challenging?",
+      "back": "Ensuring no name conflicts requires central coordination. For example, checking against all existing bucket names across regions at creation time, which adds latency and consistency overhead."
+    },
+    {
+      "front": "How does S3 ensure durability for stored objects?",
+      "back": "Using erasure coding (e.g., 11-nines) instead of simple replication. Data is split into chunks and parity blocks, stored across multiple geographically distributed data centers."
+    },
+    {
+      "front": "Explain the trade-off between erasure coding and replication in S3 design.",
+      "back": "Erasure coding uses less storage space (e.g., 50% overhead) but requires complex computation to reconstruct data. Replication (e.g., 3 copies) is simpler but consumes more storage."
+    },
+    {
+      "front": "What is the role of metadata in an S3-like system?",
+      "back": "Stores information like object size, timestamps, access permissions, and encryption keys separately from the data. For example, metadata allows quick lookup of where an object's data chunks are stored."
+    },
+    {
+      "front": "How would you handle massive write traffic to an S3 bucket?",
+      "back": "Use distributed writes with sharding by object key. For example, route writes to different storage nodes based on a hash of the key to balance load and prevent hotspots."
+    },
+    {
+      "front": "What system design decision would you make to prioritize low latency over cost?",
+      "back": "Implement in-memory caching for frequently accessed objects (e.g., hot files) and use edge nodes (similar to CDN) to store copies closer to users, reducing round-trip times."
+    },
+    {
+      "front": "Why are foreign exchange fees higher when converting via non-specialized banks?",
+      "back": "Retail banks often add markup to the mid-market rate. For example, converting 100 USD to EUR via a standard bank might yield 88 EUR, but using a forex specialist could reduce fees by utilizing wholesale rates."
+    },
+    {
+      "front": "How does range-based sharding ensure data distribution?",
+      "back": "Data is divided by continuous ranges of a column (e.g., user IDs 1-1000 in shard 1, 1001-2000 in shard 2). This simplifies queries within a range but risks hotspots if popular ranges are concentrated."
+    },
+    {
+      "front": "What is a practical consequence of uneven distribution in horizontal partitioning?",
+      "back": "Overloaded shards experience higher latency. For example, if most queries target shard 1 (due to ID ranges of active users), it could become a bottleneck, requiring rebalancing."
+    },
+    {
+      "front": "Design a system to track CDN edge server health for optimal routing.",
+      "back": "Implement periodic health checks (e.g., ping tests) and load metrics. Route requests to edge servers with the lowest latency and available capacity, avoiding degraded or overloaded nodes."
+    },
+    {
+      "front": "How do you prevent CDN cached data from becoming stale?",
+      "back": "Use TTL (time-to-live) settings and cache invalidation. For example, set short TTLs for dynamic content, and invalidate cached copies when the origin server updates data (e.g., via cache-busting URLs or purge requests)."
+    },
+    {
+      "front": "What distinguishes block storage from file storage in terms of abstraction and accessibility?",
+      "back": "Block storage provides raw, unstructured blocks of data, managed by the server's operating system. It is not shared and requires handling blocks and formatting. File storage adds a hierarchical directory structure and protocols like SMB/CIFS/NFS, simplifying file sharing and management across multiple servers."
+    },
+    {
+      "front": "How does file storage abstract block storage to improve usability?",
+      "back": "File storage adds a higher-level abstraction by organizing data into files and directories. It handles block management, formatting, and protocols, allowing servers to interact with files without dealing with low-level block operations."
+    },
+    {
+      "front": "Why is object storage considered a trade-off between performance and durability?",
+      "back": "Object storage prioritizes durability, scale, and low cost over performance. It sacrifices speed for storing vast amounts of 'cold' data (archival/backup) using a flat structure and REST APIs, making it inefficient for real-time, high-performance needs."
+    },
+    {
+      "front": "Explain the three DNS server levels and their roles in resolving a domain name like 'google.com'.",
+      "back": "1. Root servers hold TLD server IPs. 2. TLD servers (e.g., .com) store authoritative name server IPs. 3. Authoritative servers provide the IP for 'google.com'. The resolver queries these in sequence to translate the domain to an IP."
+    },
+    {
+      "front": "Why are there only 13 logical root name servers globally?",
+      "back": "The 13 root servers use anycast to distribute load and improve accessibility. This number balances redundancy, scalability, and network management efficiency."
+    },
+    {
+      "front": "What differentiates TLD name servers like '.com' from '.test'?",
+      "back": "TLDs categorize domains: generic (e.g., .com), country-code (e.g., .us), or special-use (e.g., .test). Each TLD has its own name servers managing registered domains under that category."
+    },
+    {
+      "front": "How does an authoritative name server contribute to DNS resolution?",
+      "back": "It holds the actual DNS records (e.g., IP addresses) for a domain and responds with the queried data once the resolver has reached it via root and TLD servers."
+    },
+    {
+      "front": "Walk through the DNS lookup steps when typing 'google.com' into a browser.",
+      "back": "1. Browser queries DNS resolver. 2. Resolver asks root server for TLD (.com) server. 3. TLD server directs to google.com's authoritative server. 4. Authoritative server returns google.com's IP. 5. Resolver caches and returns the IP to the browser."
+    },
+    {
+      "front": "Why do DNS resolvers use caching across multiple layers (browser, OS, ISP)?",
+      "back": "Caching reduces latency and network traffic by storing recent DNS lookups locally. If a cached entry exists, the resolver avoids querying external servers, speeding up future requests."
+    },
+    {
+      "front": "After DNS resolution, what happens before the browser sends an HTTP request?",
+      "back": "The browser establishes a TCP connection with the server using the resolved IP address to ensure a reliable data transfer channel."
+    },
+    {
+      "front": "What components make up the HTTP request sent to the server in the example?",
+      "back": "The request includes the method (GET), path (/phone), protocol version (HTTP/1.1), and headers like Host (example.com). This specifies the resource and server to access."
+    },
+    {
+      "front": "Why does the HTTP response include headers like 'Content-Type: text/html'?",
+      "back": "These headers inform the browser how to interpret the response body (e.g., as HTML). The browser uses this metadata to render content correctly without guessing."
+    },
+    {
+      "front": "What triggers the browser's HTML rendering process after receiving a response?",
+      "back": "The browser parses the HTML, CSS, and JavaScript in the response, constructs the Document Object Model (DOM), and renders the page visually based on layout and styling rules."
+    },
+    {
+      "front": "How does AlphaCode generate and refine code solutions for programming problems?",
+      "back": "AlphaCode pre-trains on GitHub code, fine-tunes on competitive datasets, generates many solutions, clusters them, and evaluates via test cases to select the best-performing code."
+    },
+    {
+      "front": "What causes replication lag in read replica setups, and why is it problematic?",
+      "back": "Replication lag occurs when data sync between primary and replicas is delayed due to network issues or overload. Users might see outdated data (e.g., missing orders) after a write, causing inconsistency."
+    },
+    {
+      "front": "What strategies mitigate replication lag's impact on user experience?",
+      "back": "1. Route latency-sensitive reads to the primary. 2. Check if replicas are up-to-date before querying them. 3. Fail reads or reroute to primary if data isn\u2019t synced."
+    },
+    {
+      "front": "How does database middleware simplify application design?",
+      "back": "Middleware abstracts database topology, handles routing (writes to primary, reads to replicas), and uses standard protocols (MySQL). This removes the need for apps to manage replication logic directly."
+    },
+    {
+      "front": "What trade-off comes with using database middleware?",
+      "back": "Middleware adds a performance-critical layer: it increases latency and requires high availability to avoid single points of failure, despite simplifying application complexity."
+    },
+    {
+      "front": "How does the read replica pattern distribute database workloads?",
+      "back": "Writes are directed to the primary, which replicates data to read replicas. Reads are routed to replicas, reducing primary load for read-heavy workloads but introducing potential consistency delays."
+    },
+    {
+      "front": "What happens to large email attachments in the described system?",
+      "back": "Attachments too large for queues are stored in an object store (e.g., S3). This prevents queue overflow and allows efficient retrieval later during mail processing."
+    },
+    {
+      "front": "Why is an incoming email queue beneficial in email processing?",
+      "back": "The queue decouples SMTP servers from mail processors, allowing independent scaling. It also buffers traffic surges, preventing processor overloads and ensuring eventual processing."
+    },
+    {
+      "front": "What policies can an SMTP server enforce during connection setup?",
+      "back": "SMTP servers can reject emails based on invalid domains, incorrect authentication, or spammy content before accepting the message body, reducing unnecessary processing."
+    },
+    {
+      "front": "How does the read-after-write consistency requirement influence database routing?",
+      "back": "After a write, subsequent reads for the same data must be routed to the primary until the replica catches up. This ensures users see immediate changes (e.g., new orders)."
+    },
+    {
+      "front": "Why do object storage systems use a flat structure instead of hierarchies?",
+      "back": "Flat structures (e.g., key-value pairs) simplify scalability and metadata management. Hierarchies add complexity for large-scale storage, making flat structures better for unstructured data like backups."
+    },
+    {
+      "front": "How does replication lag affect a user's order confirmation experience?",
+      "back": "If a user checks their order immediately after placing it, the read replica might not have synced the data yet, showing outdated info and confusing the user."
+    },
+    {
+      "front": "What protocols enable file storage to be shared across multiple servers?",
+      "back": "File-level protocols like SMB/CIFS (Windows) and NFS (Unix/Linux) allow servers to access shared files and directories over a network without managing block-level storage."
+    },
+    {
+      "front": "When would you choose object storage over file storage?",
+      "back": "Use object storage for unstructured, cold data (e.g., archives, backups) where durability, low cost, and massive scale outweigh the need for hierarchical directories and fast access."
+    },
+    {
+      "front": "Why does object storage rely on REST APIs instead of traditional file protocols?",
+      "back": "REST APIs align with web-scale systems, enabling cross-platform access and integration with cloud services. They support scalability and simplicity for distributed systems like AWS S3."
+    },
+    {
+      "front": "How does DNS's hierarchical design improve scalability?",
+      "back": "By distributing authority across specialized servers (root, TLD, authoritative), the system avoids a single centralized database. This structure handles billions of domains efficiently."
+    },
+    {
+      "front": "How does database middleware maintain MySQL compatibility?",
+      "back": "Middleware uses the MySQL network protocol for communication, allowing any MySQL client to connect without changes. This simplifies migration and integration with existing tools."
+    },
+    {
+      "front": "What enables AlphaCode to outperform 54% of human coders in coding contests?",
+      "back": "Pre-training on vast code repositories and fine-tuning on competitive datasets let AlphaCode generate diverse solutions. Filtering and reranking from thousands of outputs selects high-quality code matching problem requirements."
+    },
+    {
+      "front": "How does the scaling of map tiles work with increasing zoom levels in Google Maps?",
+      "back": "At zoom level 0, a single 256x256 pixel tile represents the entire map. Each subsequent zoom level doubles the tile count in both directions, resulting in 4x as many tiles and 4x more pixels total. This provides increasing detail while avoiding excessive bandwidth use."
+    },
+    {
+      "front": "Why are pre-computed tiles used instead of dynamically rendering the entire map?",
+      "back": "Pre-computed tiles allow efficient loading by serving only relevant tiles for the user\u2019s current view. This reduces bandwidth usage and improves performance, especially on mobile devices."
+    },
+    {
+      "front": "How are road segments structured and organized in Google Maps?",
+      "back": "Road segments are small blocks containing roads and junctions. Nearby segments are grouped into super segments recursively to cover larger areas, enabling efficient path calculation."
+    },
+    {
+      "front": "How are road segments converted into a navigable data structure?",
+      "back": "Segments are modeled as a graph where nodes represent segments, and edges connect reachable neighbors. This allows shortest-path algorithms like Dijkstra or A* to compute routes."
+    },
+    {
+      "front": "What two services does the navigation service use to calculate routes?",
+      "back": "The navigation service uses the Geocoding Service (to convert addresses to coordinates) and the Route Planner Service (to calculate paths, time estimates, and rankings)."
+    },
+    {
+      "front": "What three steps does the Route Planner Service perform?",
+      "back": "1. Calculate top-K shortest paths between points. 2. Estimate travel time using current/historical traffic data. 3. Rank paths based on time and user preferences (e.g., avoiding tolls)."
+    },
+    {
+      "front": "How does the Location Service contribute to map accuracy?",
+      "back": "User location updates help detect road changes (e.g., new closures), improve map accuracy over time, and provide live traffic data inputs for more reliable route planning."
+    },
+    {
+      "front": "Why is a CDN paired with cloud storage used for map tiles?",
+      "back": "CDNs cache static tiles (rarely updated), enabling fast, low-latency delivery to clients globally. This reduces server load and ensures quick map rendering."
+    },
+    {
+      "front": "What problem does pre-calculating tiles at multiple zoom levels solve?",
+      "back": "It avoids real-time rendering of high-resolution maps, reducing computational overhead and bandwidth consumption. Users only download necessary tiles for their current zoom level."
+    },
+    {
+      "front": "Differentiate between clearing and settlement in financial transactions.",
+      "back": "Clearing calculates net obligations between parties (who owes whom how much). Settlement moves actual funds between bank reserves in the settlement bank to fulfill these net obligations."
+    },
+    {
+      "front": "What are the three layers involved in money movement for a transaction?",
+      "back": "1. Transaction Layer: Online purchase execution. 2. Payment/Clearing Layer: Netting transactions to reduce settlement volume. 3. Settlement Layer: Actual fund transfers between banks."
+    },
+    {
+      "front": "Why are information flow and fund flow separated in payment systems?",
+      "back": "This separation allows asynchronous processing: transaction records occur immediately, while fund movements happen later (e.g., end-of-day settlement). This optimizes efficiency but requires reconciliation."
+    },
+    {
+      "front": "Why is reconciliation critical in payment systems?",
+      "back": "Reconciliation ensures data consistency between the informational (transaction) records and the actual fund movements. Without it, mismatches due to timing or currency conversions could cause errors."
+    },
+    {
+      "front": "What challenge arises in reconciliation for cross-currency transactions?",
+      "back": "Currency exchange adds layers of complexity. Each provider handles conversion differently, requiring precise tracking of exchange rates, timing, and netting across currencies to ensure accurate records."
+    },
+    {
+      "front": "How does service discovery improve the pull model\u2019s scalability?",
+      "back": "Service discovery dynamically tracks available endpoints (e.g., via Kubernetes/Zookeeper). This eliminates reliance on static files, allowing metrics collectors to adapt to frequent service additions/removals without manual updates."
+    },
+    {
+      "front": "What are the three high-level components of Google Maps?",
+      "back": "1. Location Service: Tracks user positions and updates map data. 2. Map Rendering: Serves precomputed tiles for display. 3. Navigation Service: Calculates routes using geocoding and path planning."
+    },
+    {
+      "front": "How many zoom levels does Google Maps use, and what determines tile size?",
+      "back": "Google Maps uses 21 zoom levels. Each tile is fixed at 256x256 pixels, but the total image size grows exponentially (e.g., 512x512 at zoom 1)."
+    },
+    {
+      "front": "What enables clients to dynamically display maps as users pan/zoom?",
+      "back": "Precomputed tiles at various zoom levels allow clients to request only the needed tiles (e.g., surrounding an area) and stitch them into a mosaic without real-time rendering."
+    },
+    {
+      "front": "Why are road segments grouped into super segments?",
+      "back": "This hierarchical structure allows efficient coverage of large areas while maintaining detailed path information. Super segments reduce the number of connections needed in the navigation graph."
+    },
+    {
+      "front": "Which algorithms are used to find the shortest path between two locations?",
+      "back": "Dijkstra\u2019s algorithm (for unweighted graphs) and A* (for weighted graphs with heuristic estimates) are used to compute optimal routes between nodes in the road segment graph."
+    },
+    {
+      "front": "How does the Route Planner Service prioritize user preferences?",
+      "back": "After ranking paths by estimated time, it applies user filters (e.g., avoiding tolls or highways). Paths violating constraints are excluded, and the remaining are ranked for optimal user experience."
+    },
+    {
+      "front": "What data does the metrics collector retrieve from service discovery?",
+      "back": "Metadata like endpoint IPs, pulling intervals, timeout settings, and retry parameters. This ensures collectors know where/when to pull metrics without manual configuration."
+    },
+    {
+      "front": "How does the pull model collector retrieve metrics from services?",
+      "back": "Services expose an HTTP endpoint (e.g., /metrics) via a client library. Collectors periodically fetch data from these endpoints using the discovered configuration."
+    },
+    {
+      "front": "What distinguishes pull and push models for data collection?",
+      "back": "In pull, collectors actively request data from endpoints. In push, services send data to collectors proactively. Pull requires knowledge of endpoints, while push avoids this but risks data overload."
+    },
+    {
+      "front": "Explain the separation of info and fund flows using an example.",
+      "back": "When Bob buys a book, Amazon\u2019s bank and the seller\u2019s bank record transactions (info flow). Funds only move at settlement (fund flow), where net amounts are transferred between banks\u2019 reserves."
+    },
+    {
+      "front": "How does netting work in settlement between banks?",
+      "back": "Banks calculate net balances owed between them. For example, if Bank A owes Bank B $100 and Bank B owes Bank A $500, the net settlement is Bank B paying Bank A $400, minimizing actual transfers."
+    },
+    {
+      "front": "What happens if a service\u2019s endpoints change in the pull model?",
+      "back": "The metrics collector can either: 1. Register for change notifications via service discovery to get updates, or 2. Poll service discovery periodically to refresh endpoint lists."
+    },
+    {
+      "front": "Why is the settlement layer\u2019s role critical despite modern digital payments?",
+      "back": "Even with instant digital transactions, settlement finalizes ownership of funds by moving reserves between banks. Without it, transactions remain tentative until funds are physically transferred."
+    },
+    {
+      "front": "How does the pull model handle large-scale service expansions?",
+      "back": "By integrating with service discovery tools, it dynamically tracks new/removed endpoints without manual updates. This ensures all services are monitored as the system scales."
+    },
+    {
+      "front": "What problem arises without separating info and fund flows?",
+      "back": "Without asynchronous layers, every transaction would require immediate fund transfers, leading to high latency, increased risk, and operational inefficiency in global financial systems."
+    },
+    {
+      "front": "Why is low cardinality important when using labels in a time-series database?",
+      "back": "Low cardinality ensures labels have a small set of possible values, enabling efficient indexing and fast data lookup. This optimizes query performance by reducing the complexity of filtering and aggregating time-series data."
+    },
+    {
+      "front": "What role does Kafka play in a metrics monitoring system, and why is it critical?",
+      "back": "Kafka acts as a scalable, distributed messaging platform that decouples data collection from processing. It ensures reliable data streaming between components, enabling high throughput and fault tolerance in real-time systems."
+    },
+    {
+      "front": "Explain the purpose of reconciliation in payment systems using the Paypal example.",
+      "back": "Reconciliation ensures all financial records (e.g., purchase orders, ledger entries, and external transactions) match. It prevents discrepancies by cross-verifying amounts across systems, like confirming a $200 debit in a ledger matches a Paypal transaction."
+    },
+    {
+      "front": "How does data normalization resolve discrepancies during reconciliation?",
+      "back": "Data normalization transforms inconsistent formats (e.g., dates) into a standardized format, enabling accurate comparisons between systems. This avoids errors caused by differing timestamp representations."
+    },
+    {
+      "front": "Why is big data processing necessary for reconciliation with massive data volumes?",
+      "back": "Big data tools like Hadoop or Flink handle large-scale data efficiently. Batch processing (Hadoop) is used for non-real-time reconciliation, while streaming (Flink) ensures near-real-time consistency checks."
+    },
+    {
+      "front": "What is a 'temporary break' in reconciliation, and how is it resolved?",
+      "back": "A temporary break occurs when timing differences (e.g., cross-day transactions) cause mismatches. It\u2019s resolved by rechecking the transaction in the next period\u2019s data, resolving discrepancies without manual intervention."
+    },
+    {
+      "front": "Why is an alerting system essential in a metrics monitoring architecture?",
+      "back": "It provides real-time visibility into system health by triggering notifications (e.g., emails, alerts) when thresholds are breached, enabling proactive issue resolution and maintaining high availability."
+    },
+    {
+      "front": "What is the 'exactly-once' guarantee in payment systems, and why is it critical?",
+      "back": "Exactly-once ensures a payment is processed precisely once, preventing over-charges or under-charges. It\u2019s critical for maintaining customer trust and financial accuracy, even in failure-prone environments."
+    },
+    {
+      "front": "How do retry mechanisms and idempotency checks work together to achieve exactly-once guarantees?",
+      "back": "Retries ensure 'at least once' by re-attempting failed transactions. Idempotency checks ensure 'at most once' by validating that repeated requests (e.g., with unique keys) don\u2019t cause duplicate processing."
+    },
+    {
+      "front": "Why is an idempotency key necessary for payment APIs?",
+      "back": "It ensures identical API calls produce the same result, even if sent multiple times (e.g., due to network errors). This prevents duplicate transactions, using UUIDs that expire to avoid long-term key reuse."
+    },
+    {
+      "front": "What are the foundational Google papers that shaped big data, and what problem did each solve?",
+      "back": "Google\u2019s 3 papers: GFS (distributed storage for big data), MapReduce (parallel processing model), and BigTable (structured data storage). They addressed scalability, computation, and storage challenges for massive datasets."
+    },
+    {
+      "front": "How did Hive improve upon MapReduce for big data queries?",
+      "back": "Hive introduced a SQL-like interface (HiveQL) to simplify writing MapReduce jobs, making it more accessible to non-programmers. It abstracted the complexity of MapReduce into higher-level queries."
+    },
+    {
+      "front": "What is the difference between Lambda and Kappa architectures in streaming?",
+      "back": "Lambda uses separate streams (batch and real-time), while Kappa merges both into a unified stream processing flow using Kafka. Kappa simplifies infrastructure by relying solely on streaming data."
+    },
+    {
+      "front": "Why did Spanner reintroduce consistency to Google\u2019s OLTP systems?",
+      "back": "Spanner addressed the lack of consistency in BigTable and Megastore by using globally distributed transactions and atomic clocks, ensuring ACID compliance for large-scale relational data."
+    },
+    {
+      "front": "What is the role of a time-series database in metrics monitoring?",
+      "back": "It stores time-stamped data efficiently, enabling fast queries on temporal patterns. Its optimized indexing (e.g., by labels) and query capabilities make it ideal for visualizing and analyzing metrics over time."
+    },
+    {
+      "front": "How does a quadtree partition 2D space, and what problem does it solve?",
+      "back": "A quadtree recursively subdivides space into four quadrants until a stopping criterion is met (e.g., maximum points per quadrant). It optimizes spatial queries, like finding nearby restaurants in LBS apps."
+    },
+    {
+      "front": "Why is a quadtree considered an in-memory data structure?",
+      "back": "It resides entirely in memory on LBS servers for fast spatial queries. Unlike disk-based databases, it avoids I/O latency but may require periodic updates from external data sources."
+    },
+    {
+      "front": "What security techniques are critical in payment systems?",
+      "back": "Common techniques include encryption (e.g., TLS), tokenization to replace sensitive data with tokens, fraud detection (e.g., anomaly detection), and PCI DSS compliance to protect payment information."
+    },
+    {
+      "front": "How does reconciliation act as a 'safety net' for payment systems?",
+      "back": "It detects discrepancies caused by failures, network issues, or system inconsistencies. Even with 'exactly-once' semantics, reconciliation ensures financial integrity by cross-verifying records post-execution."
+    },
+    {
+      "front": "Why is choosing the right database critical in system design?",
+      "back": "The database choice impacts scalability, performance, and cost. For example, time-series DBs are optimal for metrics, while document stores suit unstructured data. Misalignment can cause bottlenecks or inefficiencies."
+    },
+    {
+      "front": "What does 'massive data + massive calculation' imply about big data techniques?",
+      "back": "It highlights the core challenge of big data: handling enormous datasets (storage) and performing complex computations (processing) efficiently. Frameworks like MapReduce or Spark address both aspects."
+    },
+    {
+      "front": "How does Dremel differ from MapReduce in OLAP processing?",
+      "back": "Dremel (later Google BigQuery) enabled interactive queries on nested data structures with a columnar format, reducing latency compared to batch-oriented MapReduce."
+    },
+    {
+      "front": "Why is Kubernetes important in managing big data clusters?",
+      "back": "It orchestrates containerized applications on commodity servers, automating deployment, scaling, and maintenance. This ensures efficient resource utilization and fault tolerance in distributed systems."
+    },
+    {
+      "front": "What problem does the 'cutoff time issue' in reconciliation illustrate?",
+      "back": "It highlights temporal mismatches between systems (e.g., cross-day timestamps), requiring reconciliation systems to account for time zone differences or processing delays to avoid false discrepancies."
+    },
+    {
+      "front": "How does HiveQL simplify big data analysis?",
+      "back": "It allows users to write declarative SQL-like queries instead of manually coding MapReduce jobs. This lowers the barrier to entry for analysts and data engineers unfamiliar with low-level distributed programming."
+    },
+    {
+      "front": "Why is retry a necessary component of at-least-once guarantees?",
+      "back": "Network instability or transient errors can cause failures. Retrying failed operations ensures eventual success, fulfilling the 'at least once' requirement even in error-prone environments."
+    },
+    {
+      "front": "How does the 'Dataflow Model' underpin Apache Flink?",
+      "back": "The Dataflow Model (proposed by Google) abstracts streaming processing into bounded/unbounded data and stateful operations, enabling Flink to process streams and micro-batches uniformly with exactly-once semantics."
+    },
+    {
+      "front": "What distinguishes OLTP from OLAP in database design?",
+      "back": "OLTP focuses on fast, small transactions (e.g., inserting a payment), while OLAP prioritizes complex analytics (e.g., reporting trends) on large datasets. OLTP uses row-oriented storage, while OLAP often uses columnar storage for efficient aggregation."
+    },
+    {
+      "front": "How does a quadtree improve spatial query efficiency compared to a brute-force search?",
+      "back": "By partitioning space hierarchically, a quadtree reduces the number of points to check for nearby objects. A brute-force search would require comparing every point, making it O(n) vs. O(log n) for quadtrees in best cases."
+    },
+    {
+      "front": "Why is reading a company's engineering blog a system design interview pro tip?",
+      "back": "It reveals the company\u2019s technical stack, problem-solving approaches, and priorities. This knowledge helps tailor your design to align with their infrastructure (e.g., using Kafka if they emphasize streaming) and shows domain awareness."
+    },
+    {
+      "front": "How does Yelp's Local-Based Service (LBS) efficiently find nearby restaurants?",
+      "back": "LBS uses Geohash to divide the Earth into grids, storing restaurant locations as Geohash codes. Queries search for codes within a region (e.g., `LIKE '01%'`) to retrieve nearby restaurants efficiently instead of calculating distances for all entries."
+    },
+    {
+      "front": "What is the problem with storing restaurant coordinates as simple latitude and longitude in the database?",
+      "back": "Direct distance calculations between every restaurant and the query point would be computationally expensive, causing slow queries. Geohash addresses this by converting coordinates into spatially aware strings for faster lookups."
+    },
+    {
+      "front": "What is Geohash, and how does it improve spatial queries?",
+      "back": "Geohash is an encoding algorithm that divides the Earth into grids and assigns unique codes to each grid. By storing these codes, queries can quickly narrow down results to specific regions without complex distance calculations."
+    },
+    {
+      "front": "How does the Geohash algorithm divide the Earth's surface into grids?",
+      "back": "It recursively splits the globe into four quadrants (based on the prime meridian and equator), then subdivides each quadrant into smaller grids. Each split alternates between longitude and latitude bits, creating hierarchical spatial identifiers."
+    },
+    {
+      "front": "Why might Geohash have limitations in densely populated areas?",
+      "back": "In dense regions like downtown New York, many restaurants may fall into the same grid block, leading to inefficient scans. This necessitates more complex algorithms or additional optimizations to handle high-density areas."
+    },
+    {
+      "front": "What principle do modern stock exchanges use to achieve microsecond latency?",
+      "back": "They minimize tasks on the critical path by reducing steps, network hops, disk usage, and context switches. The critical path includes order validation, risk checks, and matching, while non-essential tasks are offloaded."
+    },
+    {
+      "front": "What is the critical path in a stock exchange's order processing?",
+      "back": "The critical path starts with an order entering the order manager, undergoes mandatory risk checks, is matched in the engine, and returns the execution result. All non-essential tasks (e.g., logging) are removed from this path."
+    },
+    {
+      "front": "Why do stock exchanges use single-threaded components on the critical path?",
+      "back": "Single-threaded components eliminate context switching and locks, ensuring predictable execution speed. By pinning threads to specific CPUs, the system avoids overhead from scheduling and synchronization."
+    },
+    {
+      "front": "How does shared memory reduce latency in stock exchange systems?",
+      "back": "Shared memory acts as an event bus, allowing components to communicate without network latency or disk writes. This direct data exchange speeds up interactions between the order manager, matching engine, and other services."
+    },
+    {
+      "front": "What is an order book, and how is it structured?",
+      "back": "An order book is a data structure that lists buy (bid) and sell (ask) orders, organized by price levels. Each price level contains a FIFO queue of orders. The buy book lists bids from highest to lowest, while the sell book lists asks from lowest to highest."
+    },
+    {
+      "front": "How does a market order affect the order book's price levels?",
+      "back": "A market order (e.g., buying 2700 shares) consumes all available orders at the best ask price until filled. This may eliminate a price level (e.g., 100.10), causing the next level (e.g., 100.11) to become the new best ask price."
+    },
+    {
+      "front": "What operations must an efficient order book data structure support?",
+      "back": "It must provide O(1) time complexity for: (1) retrieving volume at specific price levels, (2) adding/canceling orders, (3) executing matches, and (4) querying best bid/ask prices. This ensures rapid updates during high-frequency trading."
+    },
+    {
+      "front": "Why is determinism important in a stock exchange's matching engine?",
+      "back": "Determinism ensures that all participants see the same execution sequence, preventing disputes over order fairness. The sequencer enforces a strict order of events, even in distributed systems, to maintain integrity."
+    },
+    {
+      "front": "What steps occur when a user places a stock buy order through a broker?",
+      "back": "1. The user's order is sent to the broker. 2. The broker routes it to the exchange. 3. The exchange validates and forwards it to the order manager. 4. Risk checks are performed. 5. The order is matched, and results are sequenced before being returned to the user."
+    },
+    {
+      "front": "What is the role of the sequencer in a stock exchange's order processing?",
+      "back": "The sequencer assigns a strict, immutable order to all events (e.g., orders and executions) to ensure deterministic processing. This prevents race conditions and guarantees that all participants observe the same sequence of events."
+    },
+    {
+      "front": "Why must payment systems handle multiple sellers in a single transaction?",
+      "back": "When users buy items from multiple sellers in one checkout, the payment service splits the order into individual payment tasks. Each task is handled by the payment executor to ensure proper routing and settlement with each seller."
+    },
+    {
+      "front": "How does the payment executor interact with external Payment Service Providers (PSPs)?",
+      "back": "The executor forwards credit card payment details to the PSP (e.g., a bank gateway) to complete the transaction. Upon confirmation, it updates the seller's wallet and ledger, ensuring the payment is recorded and settlement files are generated."
+    },
+    {
+      "front": "Why is it important to update the ledger after a successful payment?",
+      "back": "The ledger records all financial transactions permanently, providing an auditable trail. This ensures compliance with accounting standards and allows reconciliation during daily settlements with banks/PSPs."
+    },
+    {
+      "front": "What is the purpose of settlement files in payment systems?",
+      "back": "Settlement files from banks/PSPs reconcile daily transactions and balances. They enable the payment system to verify that all recorded transactions match external records, ensuring accuracy and resolving discrepancies."
+    },
+    {
+      "front": "What are key design principles for a flash sale system?",
+      "back": "Principles include: minimizing dependencies, shortening critical paths (e.g., combining services), using async messaging (e.g., queues) for high TPS, isolating components (e.g., separating static/dynamic content), and preventing overselling."
+    },
+    {
+      "front": "Why is isolation crucial in a flash sale backend?",
+      "back": "Isolating processes (e.g., rare items on dedicated servers) prevents cascading failures. Separating static content (e.g., images) from dynamic services reduces load, ensuring availability during traffic spikes."
+    },
+    {
+      "front": "How does overselling occur, and why is it critical to prevent it?",
+      "back": "Overselling happens when inventory is decremented optimistically without proper locking, leading to sold-out items being confirmed post-order. This causes customer dissatisfaction and potential fraud. Proper inventory checks (e.g., atomic updates) are essential."
+    },
+    {
+      "front": "Why is user experience important in flash sale systems?",
+      "back": "Poor UX (e.g., delayed feedback) can lead to cart abandonment or customer frustration. Systems must confirm order validity before finalizing purchases to avoid scenarios where users are told their order 'failed after submission.'"
+    },
+    {
+      "front": "What is back-of-the-envelope estimation, and why is it crucial in system design?",
+      "back": "Estimations involve calculating expected data scales and traffic to inform design choices (e.g., caching vs. sharding). They ensure solutions are proportionate to the problem and avoid over-engineering (e.g., avoiding sharding for small datasets)."
+    },
+    {
+      "front": "How can estimations help decide between sharding and replication for a geospatial index?",
+      "back": "If the dataset fits in a single server's working set (e.g., Geohash needs <2GB), replication (for read scaling) may suffice. Sharding adds complexity but is necessary if data or read volume exceeds single-server capacity."
+    },
+    {
+      "front": "What is the role of the wallet service in payment processing?",
+      "back": "The wallet service tracks user balances and updates them after successful payments. It ensures accurate real-time reflections of funds and coordinates with the ledger to record transactions permanently."
+    },
+    {
+      "front": "How do stock exchanges ensure low latency beyond hardware choices?",
+      "back": "They minimize the critical path by using single-threaded components, shared memory for communication, and avoiding disk writes. Reducing network hops and isolating non-essential tasks off the critical path further optimizes speed."
+    },
+    {
+      "front": "What is the difference between a buy book and a sell book in order books?",
+      "back": "The buy book contains bids (buy offers) sorted from highest to lowest prices, while the sell book contains asks (sell offers) sorted from lowest to highest prices. This structure allows quick matching of buy/sell orders at the best available prices."
+    },
+    {
+      "front": "Why are order books organized by price levels with FIFO queues?",
+      "back": "FIFO ensures fairness among users at the same price level. Orders placed earlier are prioritized, preventing manipulation and maintaining a transparent market where timing (not privilege) determines execution order."
+    },
+    {
+      "front": "How does the LBS service's query using Geohash work in SQL?",
+      "back": "The query uses `LIKE 'prefix%'` to match all Geohash codes starting with a specific prefix, corresponding to a region. For example, `SELECT * WHERE geohash LIKE '01%'` retrieves all restaurants in grids under the '01' quadrant."
+    },
+    {
+      "front": "What is the trade-off when using a single giant server in stock exchanges?",
+      "back": "A single server minimizes network latency and simplifies synchronization but risks single points of failure. This trade-off prioritizes speed over redundancy, relying on other safeguards (e.g., backups) for reliability."
+    },
+    {
+      "front": "How does the payment service handle multiple payment orders from a single event?",
+      "back": "The service splits the event into individual orders (e.g., per seller), routes each to the payment executor, and waits for confirmations. Success triggers wallet and ledger updates, ensuring all sub-transactions are processed before finalizing."
+    }
+  ],
+  "metadata": {
+    "num_cards_generated": 246,
+    "total_chunks": 10,
+    "successful_chunks": 8,
+    "failed_chunks": 2,
+    "total_text_length": 96798,
+    "chunk_size": 16
+  }
+}

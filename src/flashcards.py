@@ -4,8 +4,7 @@ from modal import Image, App, Secret, gpu, web_server, method
 import json
 from typing import Any, List, Dict, Tuple
 import modal
-import PyPDF2
-import io
+import asyncio
 
 vllm_image = (
     modal.Image.debian_slim(python_version="3.12")
@@ -13,9 +12,7 @@ vllm_image = (
         "vllm==0.9.1",
         "huggingface_hub[hf_transfer]==0.32.0",
         "flashinfer-python==0.2.6.post1",
-        "PyPDF2",
-        "pdfplumber",
-        "requests",
+        "aiohttp",
         "pymupdf",
         extra_index_url="https://download.pytorch.org/whl/cu128",
     )
@@ -28,7 +25,7 @@ vllm_cache_vol = modal.Volume.from_name("vllm-cache", create_if_missing=True)
 
 FAST_BOOT = True
 app = modal.App("PDF-Flashcards")
-N_GPU = 2
+N_GPU = 1
 MINUTES = 60
 MODEL_DIR = "/model"
 MODEL_NAME = "Qwen/QwQ-32B-AWQ"
@@ -53,7 +50,6 @@ class FlashcardGenerator:
         cmd = [
             "vllm",
             "serve",
-            "--uvicorn-log-level=info",
             MODEL_NAME,
             "--served-model-name",
             MODEL_NAME,
@@ -67,8 +63,6 @@ class FlashcardGenerator:
         
         print("Starting VLLM server with command:", " ".join(cmd))
         self.server_process = subprocess.Popen(" ".join(cmd), shell=True)
-        
-        time.sleep(60)
 
     def create_flashcard_prompt(self, text: str, num_cards: int = 20) -> str:
         """Create a detailed prompt for generating learning-oriented flashcards"""
@@ -107,26 +101,27 @@ class FlashcardGenerator:
         }}
         
         TEXT TO PROCESS:
-        {text[:8000]}
+        {text[:10000]}
         
         Remember: Focus on understanding, not memorization. Each flashcard should help build genuine comprehension of the subject matter. RESPOND WITH ONLY THE JSON OBJECT."""
     
     def pdf_pages_generator(self, file_path):
-        """Generator that yields text page by page"""
         import pymupdf
         doc = pymupdf.open(file_path)
-    
+
+        pages = []
         try:
             for page_num in range(doc.page_count):
                 page = doc[page_num]
                 text = page.get_text()
-                yield text
+                pages.append(text)
+            
+            return pages
             
         finally:
             doc.close()
 
     def extract_text_chunks(self, pdf_bytes: bytes, chunk_size: int = 32) -> List[Tuple[int, str]]:
-        """Extract text from PDF and return chunks with their indices"""
         path = "/tmp/flashcards_temp.pdf"
         with open(path, "wb") as f:
             f.write(pdf_bytes)
@@ -147,21 +142,18 @@ class FlashcardGenerator:
                     current_text = []
                     chunk_index += 1
             
-            # Handle remaining pages if any
             if current_text:
                 full_text = "\n\n".join(current_text)
                 chunks.append((chunk_index, full_text))
             
             return chunks
         finally:
-            # Clean up temp file
             if os.path.exists(path):
                 os.remove(path)
 
     async def send_request_to_model(self, prompt: str) -> str:
-        """Send request to the local VLLM server"""
-        import requests
-        import time
+        import aiohttp
+        import asyncio
         
         messages = [
             {
@@ -180,35 +172,36 @@ class FlashcardGenerator:
             "stream": False,
             "temperature": 0.8,
             "top_p": 0.95,
-            "max_tokens": 4000,
+            "max_tokens": 4096,
         }
         
         headers = {"Content-Type": "application/json"}
         
         max_retries = 30
         
-        for attempt in range(max_retries):
-            try:
-                response = requests.post(
-                    f"http://localhost:{VLLM_PORT}/v1/chat/completions",
-                    json=payload,
-                    headers=headers,
-                    timeout=60
-                )
-                response.raise_for_status()
-                result = response.json()
-                return result["choices"][0]["message"]["content"]
-            except requests.exceptions.ConnectionError:
-                if attempt < max_retries - 1:
-                    print(f"Server not ready, retrying in 10 seconds... (attempt {attempt + 1}/{max_retries})")
-                    time.sleep(10)
-                else:
-                    raise Exception("VLLM server failed to start within expected time")
-            except Exception as e:
-                raise Exception(f"Request failed: {e}")
+        async with aiohttp.ClientSession() as session:
+            for attempt in range(max_retries):
+                try:
+                    async with session.post(
+                        f"http://localhost:{VLLM_PORT}/v1/chat/completions",
+                        json=payload,
+                        headers=headers,
+                        timeout=aiohttp.ClientTimeout(total=600)
+                    ) as response:
+                        response.raise_for_status()
+                        result = await response.json()
+                        return result["choices"][0]["message"]["content"]
+                        
+                except aiohttp.ClientConnectorError:
+                    if attempt < max_retries - 1:
+                        print(f"Server not ready, retrying in 10 seconds... (attempt {attempt + 1}/{max_retries})")
+                        await asyncio.sleep(10)  # Use async sleep
+                    else:
+                        raise Exception("VLLM server failed to start within expected time")
+                except Exception as e:
+                    raise Exception(f"Request failed: {e}")
 
     async def process_text_chunk(self, chunk_data: Tuple[int, str], num_cards: int = 16) -> Dict[str, Any]:
-        """Process a single text chunk and generate flashcards"""
         chunk_index, text = chunk_data
         
         try:
@@ -218,7 +211,6 @@ class FlashcardGenerator:
             
             flashcard_json = response.strip()
             
-            # Clean up the response
             json_start = flashcard_json.find('{')
             json_end = flashcard_json.rfind('}') + 1
             
@@ -238,7 +230,6 @@ class FlashcardGenerator:
             if "flashcards" not in flashcards_data:
                 raise ValueError("Response doesn't contain 'flashcards' key")
 
-            # Validate flashcards
             valid_flashcards = []
             for i, card in enumerate(flashcards_data["flashcards"]):
                 if "front" not in card or "back" not in card:
@@ -278,7 +269,6 @@ class FlashcardGenerator:
         num_cards: int = 16,
         chunk_size: int = 32
     ) -> Dict[str, Any]:
-        """Generate flashcards from PDF"""
         try:
             print("Extracting text chunks from PDF...")
             text_chunks = self.extract_text_chunks(pdf_bytes, chunk_size)
@@ -290,27 +280,41 @@ class FlashcardGenerator:
                 }
             
             print(f"Extracted {len(text_chunks)} chunks of {chunk_size} pages each")
-            print(f"Processing all chunks sequentially in single container...")
+            
+            print(f"Processing all chunks concurrently...")
+            
+            chunk_tasks = []
+            for chunk_index, text in text_chunks:
+                chunk_data = (chunk_index, text)
+                task = self.process_text_chunk(chunk_data, num_cards)
+                chunk_tasks.append(task)
+            
+            print(f"Starting {len(chunk_tasks)} concurrent chunk processing tasks...")
+            
+            results = await asyncio.gather(*chunk_tasks, return_exceptions=True)
             
             all_flashcards = []
             successful_chunks = 0
             failed_chunks = 0
             total_text_length = 0
             
-            for chunk_index, text in text_chunks:
-                chunk_data = (chunk_index, text)
-                result = await self.process_text_chunk(chunk_data, num_cards)
-                
-                if result.get("success", False):
+            for i, result in enumerate(results):
+                if isinstance(result, Exception):
+                    failed_chunks += 1
+                    print(f"Chunk {i} failed with exception: {result}")
+                elif result.get("success", False):
                     all_flashcards.extend(result["flashcards"])
                     successful_chunks += 1
                     total_text_length += result.get("text_length", 0)
+                    chunk_index = result.get("chunk_index", i)
                     print(f"Chunk {chunk_index} completed: {len(result['flashcards'])} flashcards")
                 else:
                     failed_chunks += 1
-                    print(f"Chunk {chunk_index} failed: {result.get('error', 'unknown error')}")
+                    chunk_index = result.get("chunk_index", i) if isinstance(result, dict) else i
+                    error = result.get("error", "unknown error") if isinstance(result, dict) else "unknown error"
+                    print(f"Chunk {chunk_index} failed: {error}")
             
-            print(f"\nProcessing complete!")
+            print(f"\nConcurrent processing complete!")
             print(f"Successful chunks: {successful_chunks}")
             print(f"Failed chunks: {failed_chunks}")
             print(f"Total flashcards: {len(all_flashcards)}")
@@ -334,11 +338,11 @@ class FlashcardGenerator:
                 "success": False,
                 "error": str(e)
             }
-
+    
 @app.local_entrypoint()
 def pdf_flashcards(pdf_path: str = None, num_cards: int = 32, chunk_size: int = 16):
     from make_cards import convert_json_file_to_anki
-    
+
     if pdf_path is None:
         print("Please provide a PDF path using --pdf-path argument")
         return
@@ -368,10 +372,9 @@ def pdf_flashcards(pdf_path: str = None, num_cards: int = 32, chunk_size: int = 
         print(f"   - Chunk size: {metadata['chunk_size']} pages")
         print(f"   - Total text length: {metadata['total_text_length']} chars")
         
-        # Show sample flashcards
         print(f"\nSample flashcards:")
         for i, card in enumerate(result["flashcards"][:3]):
-            print(f"\nSample Flashcard {i+1} ---")
+            print(f"\n--- Sample Flashcard {i+1} ---")
             print(f"Q: {card['front']}")
             print(f"A: {card['back']}")
         
@@ -384,10 +387,8 @@ def pdf_flashcards(pdf_path: str = None, num_cards: int = 32, chunk_size: int = 
     else:
         print(f"Error generating flashcards: {result['error']}")
         if "raw_response" in result:
-            print(f"Raw response: {result['raw_response']}")
+            print(f"Raw AI response: {result['raw_response']}")
     
-
-    print(f"Converting to Anki...")
+    # Convert to Anki
     convert_json_file_to_anki(output_file, pdf_path.replace(".pdf", "_flashcards.apkg"))
-
     print(f"Anki file saved to: {pdf_path.replace(".pdf", "_flashcards.apkg")}")
