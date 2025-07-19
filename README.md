@@ -1,5 +1,7 @@
 # Book to Flashcard 
 
+**Convert any Book to ANKI flashcards**
+
 I would like have certain concepts stay fresh in my mind. I read that flashcards are a good way to keep your knowledge "warm" so it does not get evicted. However, I struggle to find the time to make these flashcards. So I wrote this tool to generate flashcards from PDFs and save them to Anki.
 
 We use a reasoning model to generate the flashcards, based on the text in the PDF. Then, we save the flashcards to an importable Anki package. Have fun!
