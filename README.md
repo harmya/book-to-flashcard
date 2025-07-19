@@ -13,10 +13,16 @@ Basic usage:
 modal run flashcards.py::pdf_flashcards --pdf-path="path/to/your.pdf"
 ```
 
-To specify the number of cards per chunk:
+To specify the number of cards per pages-chunk:
 ```bash
-modal run flashcards.py::pdf_flashcards --pdf-path="path/to/your.pdf" --num-cards=15
+modal run flashcards.py::pdf_flashcards --pdf-path="path/to/your.pdf" --num-cards=16
 ```
+
+To specify the number of cards per pages-chunk and the size of the chunk:
+```bash
+modal run flashcards.py::pdf_flashcards --pdf-path="path/to/your.pdf" --num-cards=16 --chunk_size=32
+```
+This will break up the pdf into 32 page chunks and generate 16 cards per chunk.
 
 ## Example
 There should be an Anki pkg in the data/ folder that makes flashcards from a distributed systems book. Feel free to try any book that you want!
