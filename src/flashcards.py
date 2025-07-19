@@ -32,7 +32,7 @@ VLLM_PORT = 8000
 
 @app.cls(
     image=vllm_image,
-    gpu=f"H100:{N_GPU}",
+    gpu=f"A100:{N_GPU}",
     timeout=60 * MINUTES,
     volumes={
         "/root/.cache/huggingface": hf_cache_vol,
@@ -222,38 +222,38 @@ class FlashcardGenerator:
         import re
 
         text = response_text.strip()
-    
+
         if text.startswith("```json"):
             text = text[7:]
         elif text.startswith("```"):
             text = text[3:]
         if text.endswith("```"):
             text = text[:-3]
-        
+
         json_start = -1
         json_end = -1
         brace_count = 0
-        
+
         for i, char in enumerate(text):
-            if char == '{':
+            if char == "{":
                 if json_start == -1:
                     json_start = i
                 brace_count += 1
-            elif char == '}':
+            elif char == "}":
                 brace_count -= 1
                 if brace_count == 0 and json_start != -1:
                     json_end = i + 1
                     break
-        
+
         if json_start == -1 or json_end == -1:
             raise ValueError("No valid JSON object found in response")
-        
+
         json_text = text[json_start:json_end]
-        
-        json_text = re.sub(r'[\x00-\x1f\x7f-\x9f]', '', json_text)
-        json_text = re.sub(r',\s*}', '}', json_text)
-        json_text = re.sub(r',\s*]', ']', json_text)
-        
+
+        json_text = re.sub(r"[\x00-\x1f\x7f-\x9f]", "", json_text)
+        json_text = re.sub(r",\s*}", "}", json_text)
+        json_text = re.sub(r",\s*]", "]", json_text)
+
         return json.loads(json_text)
 
     async def process_text_chunk(
@@ -436,5 +436,6 @@ def pdf_flashcards(pdf: str = None, num_cards: int = 32, chunk_size: int = 16):
 
     # Convert to Anki
     from make_cards import convert_json_file_to_anki
+
     convert_json_file_to_anki(output_file, pdf.replace(".pdf", "_flashcards.apkg"))
     print(f"Anki file saved to: {pdf.replace('.pdf', '_flashcards.apkg')}")

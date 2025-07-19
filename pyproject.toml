@@ -1,5 +1,5 @@
 [project]
-name = "flashlearn"
+name = "book-to-flashcard"
 version = "0.1.0"
 description = "Generate flashcards for learning from Book PDFs"
 readme = "README.md"

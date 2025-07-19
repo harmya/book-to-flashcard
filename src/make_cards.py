@@ -190,10 +190,14 @@ def convert_json_string_to_anki(
     converter = JSONToAnkiConverter()
     return converter.convert_string_to_anki(json_string, output_name, deck_name)
 
+
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--json", type=str, required=True)
     args = parser.parse_args()
     converter = JSONToAnkiConverter()
-    converter.convert_file_to_anki(args.json, "flashcards.apkg", args.json.replace(".json", ""))
+    converter.convert_file_to_anki(
+        args.json, "flashcards.apkg", args.json.replace(".json", "")
+    )
